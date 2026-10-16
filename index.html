@@ -221,43 +221,26 @@ var ALPHA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 var PREFIX = 'bnbes-';
 var NONE = '_none';
 var DARES = [
-  'Mag-selfie ng pinaka-nakakatawang mukha at ipakita sa lahat.',
-  'Kantahin ang chorus ng huling kantang pinakinggan mo.',
-  'Gayahin ang boses ng isa sa barkada hanggang sa susunod na round.',
-  'Magsabi ng isang papuri sa bawat isang nandito.',
-  'Sumayaw ng 10 segundo ng kahit anong TikTok dance.',
-  'Magkwento ng pinaka-nakakatawa mong kahihiyan noong high school.',
-  'Magsalita na parang announcer ng PBB sa susunod na tatlong minuto.',
-  'Ipakita ang pinaka-nakakatawang litrato sa gallery mo.',
-  'Mag-text ng "Kumusta?" sa taong matagal mo nang hindi nakakausap.',
-  'Palitan ang pangalan mo sa group chat sa ibibigay ng barkada hanggang bukas.',
-  'Gawin ang pinakamahusay mong impression ng eksena sa teleserye.',
-  'Mag-plank ng 20 segundo habang nagkukuwento.',
-  'Magbigay ng hot take tungkol sa pagkain at ipagtanggol ito.',
-  'Magsalita na parang radio DJ sa susunod na round.',
-  'Ikaw ang taga-rating sa susunod na round: bigyan ng score 1 hanggang 10 ang bawat sagot.',
-  'I-type sa group chat ang "Mahal ko kayong lahat" at i-screenshot.',
-  'Kantahin ang isang linya ng paborito mong kanta sa videoke style.',
-  'Mag-imbento ng sayaw at turuan ang buong barkada.',
-  'Gawin ang pinaka-dramatikong slow-mo na galaw na parang pelikula.',
-  'Magbigay ng palayaw sa lahat ng nandito.'
-];
-var HOTSEAT = [
-  'Ano ang pinaka-nakakahiyang nangyari sa iyo nitong nakaraang buwan?',
-  'Sino sa barkada ang pinaka-malapit sa puso mo, at bakit?',
-  'Ano ang hindi mo pa nasasabi sa isa sa amin?',
-  'Totoo ba ito? Ikuwento ang kwento sa likod ng botong natanggap mo.',
-  'Ano ang pinakamalaking red flag mo?',
-  'Kailan ka huling umiyak, at dahil saan?',
-  'Anong ugali ng barkada ang pinaka-nakakainis sa iyo? Mahinahon lang!',
-  'Ano ang pangarap mo sa susunod na limang taon?',
-  'Ano ang pinaka-weird mong guilty pleasure?',
-  'Ano ang pinakamalaking gastos mo na pinagsisihan mo?',
-  'Sino ang unang crush mo at ano ang nangyari?',
-  'Ano ang pinaka-nakakatawang kasinungalingang nasabi mo kina Mama o Papa?',
-  'Kung may babaguhin ka sa sarili mo, ano ito?',
-  'Ano ang pinaka-hindi mo makakalimutang biyahe kasama kami?',
-  'Sino sa barkada ang tatawagan mo kapag may problema ka, at bakit?'
+  'I-heart ang latest post ni crush.',
+  'I-heart ang story ni crush.',
+  'Mag-post ng instant photo sa IG (walang filter!).',
+  'I-message si crush ng "Kumusta?".',
+  'Mag-chat sa isang GC ng "Miss niyo na ba ako?".',
+  'I-like ang 5 lumang post ng isang kaibigan.',
+  'Mag-post ng throwback na nakakahiya na litrato sa story.',
+  'I-text ang isang tito o tita ng "Kumusta po kayo?".',
+  'Palitan ang profile picture ng pinaka-nakakatawang litrato mo sa loob ng isang oras.',
+  'Mag-voice message sa GC at kantahin ang "Happy Birthday" kahit hindi birthday.',
+  'I-react ng heart ang huling 3 chat sa isang GC.',
+  'Mag-send ng "Miss na kita" sa isang kaibigan na matagal nang hindi nakakausap.',
+  'Mag-post ng story na may caption na "Sino nakamiss sa akin?".',
+  'Ipakita sa lahat ang huling 5 search mo sa TikTok o YouTube.',
+  'Sumayaw ng 10 segundo at i-send sa GC.',
+  'Mag-selfie ng pinaka-nakakatawang mukha at gawing story.',
+  'I-chat ang isang kaibigan ng "Libre mo ako bukas" at ipakita ang reply.',
+  'Mag-comment ng "Ganda!" sa isang lumang post ng kakilala.',
+  'Mag-voice message ng papuri sa taong nasa kaliwa mo.',
+  'I-follow ang isang random na lokal na brand at mag-comment ng emoji.'
 ];
 var app = document.getElementById('app'), top = document.getElementById('top'), toastEl = document.getElementById('toast');
 
@@ -414,15 +397,27 @@ function allVoted(){
   var on = G.od.filter(function(pid){ var p = findPl(pid); return p && p.on; });
   return on.length > 0 && on.every(function(pid){ return votes[pid] != null; });
 }
-function guessFor(pid, rd, target){
+function guessFor(pid, rd, arr){
   if(!G || G.ph !== 'reveal' || !G.gs || G.sh || rd !== G.rd) return;
-  if(!(G.rs[pid] > 0) || G.od.indexOf(target) < 0 || target === pid) return;
-  guesses[pid] = target; G.gv = G.gv || {}; G.gv[pid] = 1; broadcast();
+  if(!Array.isArray(arr)) arr = [arr];
+  var seenG = {}, ok = arr.every(function(x){ if(typeof x !== 'string' || seenG[x] || x === pid || G.od.indexOf(x) < 0) return false; seenG[x] = 1; return true; });
+  var need = G.rs[pid] || 0;
+  if(!need || !ok || arr.length > need) return;
+  guesses[pid] = arr; G.gv = G.gv || {};
+  if(arr.length === need) G.gv[pid] = 1; else delete G.gv[pid];
+  broadcast();
 }
+function votersOf(p){ return G.od.filter(function(v){ return G.vt && G.vt[v] === p; }); }
 function revealVoters(){
   if(!G || G.ph !== 'reveal' || G.sh) return;
   G.sh = 1; G.gr = {}; G.hs = G.hs || {};
-  Object.keys(guesses).forEach(function(r){ var tg = guesses[r], ok = votes[tg] === r; G.gr[r] = {g:tg, ok:ok}; if(ok) G.hs[r] = (G.hs[r] || 0) + 1; });
+  Object.keys(guesses).forEach(function(r){
+    var arr = guesses[r], vs = votersOf(r), ok = arr.length === vs.length && arr.every(function(x){ return vs.indexOf(x) > -1; });
+    G.gr[r] = {g:arr, ok:ok}; if(ok) G.hs[r] = (G.hs[r] || 0) + 1;
+  });
+  if(G.dare){
+    G.dres = topsOf({rs:G.rs}).map(function(p){ var ok = !!(G.gr[p] && G.gr[p].ok); return {p:p, ok:ok, who:ok ? votersOf(p) : [p]}; });
+  }
   broadcast();
 }
 function addCq(pid, id, q){
@@ -458,7 +453,7 @@ function startGame(){
 }
 function resetRound(){
   G.ph = 'vote'; G.voted = {}; votes = {}; guesses = {}; G.sh = 0; G.fin = 0; G.gs = 0; G.gv = {};
-  delete G.rs; delete G.vt; delete G.wn; delete G.tv; delete G.nw; delete G.gr; delete G.dare; delete G.wd;
+  delete G.rs; delete G.vt; delete G.wn; delete G.tv; delete G.nw; delete G.gr; delete G.dare; delete G.dres; delete G.wd;
   if(G.wr && G.rd > 1 && !G.pw && Math.random() < .25) G.wd = Math.random() < .5 ? 'x2' : 'rev';
   G.pw = G.wd ? 1 : 0;
   if(G.tm){ G.ts = Date.now(); G.tl = G.tm; G.te = G.ts + G.tm * 1000; } else { delete G.ts; delete G.tl; delete G.te; }
@@ -485,7 +480,7 @@ function doReveal(){
   G.hist = G.hist || []; G.hist.push({q:G.q, w:tops, n:topN, tv:tv, nn:rs[NONE] || 0});
   delete G.dare;
   if(G.dr && tops.length && topN > 0){
-    G.dare = Math.random() < .55 ? {k:'dare', t:DARES[Math.floor(Math.random() * DARES.length)]} : {k:'hot', t:HOTSEAT[Math.floor(Math.random() * HOTSEAT.length)]};
+    G.dare = {k:'q', t:DARES[Math.floor(Math.random() * DARES.length)]};
   }
   G.fin = (G.md !== 'x' && G.od.some(function(p){ return G.sc[p] >= G.tg; })) ? 1 : 0;
   broadcast();
@@ -498,7 +493,7 @@ function nextRound(){
   G.rd++; G.ptr++; G.ak = next; G.q = G.pq[G.ptr]; G.used.push(G.q); resetRound(); broadcast();
 }
 function toLobby(){
-  ['od','nm','sc','rs','vt','wn','tv','ak','q','rd','ptr','seed','pq','ex','al','nw','gs','gv','gr','dare','wd','te','ts','tl','pw'].forEach(function(k){ delete G[k]; });
+  ['od','nm','sc','rs','vt','wn','tv','ak','q','rd','ptr','seed','pq','ex','al','nw','gs','gv','gr','dare','dres','wd','te','ts','tl','pw'].forEach(function(k){ delete G[k]; });
   G.ph = 'lobby'; G.voted = {}; G.sh = 0; G.fin = 0; votes = {}; broadcast();
 }
 function startHost(resume){
@@ -647,7 +642,7 @@ function homeHtml(){
     + '<p><b>1.</b> Isang tao ang gagawa ng room at ibibigay ang 5-letrang code. Ang iba ay maglalagay ng code sa sarili nilang phone.</p>'
     + '<p><b>2.</b> Lalabas ang tanong na "Sino...?" sa lahat ng phone. Sabay-sabay na pipili ng sagot ang bawat isa, pati ang nagtanong.</p>'
     + '<p><b>3.</b> Kapag nakaboto na ang lahat, ilalabas ang resulta. Hulaan kung sino ang bumoto sa iyo bago ibunyag ng host.</p>'
-    + '<p><b>4.</b> Kung nakakuha ka ng kahit kalahati ng boto, sa iyo ang black card. Unang makaabot sa target, panalo.</p><p class="muted">Pampasaya: hamon sa pinaka-binoto, wild rounds, timer, sarili ninyong tanong, at mga titulo sa dulo.</p>'
+    + '<p><b>4.</b> Kung nakakuha ka ng kahit kalahati ng boto, sa iyo ang black card. Unang makaabot sa target, panalo.</p><p class="muted">Pampasaya: Hulaan Challenge, wild rounds, timer, sarili ninyong tanong, at mga titulo sa dulo.</p>'
     + '<p class="muted">Maglagay ng larawan bago magsimula. May "Wala" na pagpipilian kung hindi akma ang tanong. Hindi na uulit ang tanong hanggang hindi pa naubos.</p><p class="muted">Kailangang bukas ang phone ng host buong laro. Kung hindi makakonekta ang isang player, subukan ang parehong Wi-Fi.</p></div></details>';
   return h;
 }
@@ -695,7 +690,7 @@ function lobbyHtml(c, host){
     + opt('x', g.md, 'Chill', 'Walang score. Kwentuhan lang.', dis)
     + '<button class="opt" data-act="selfie" aria-pressed="' + !!g.sf + '"' + dis + '><b>Selfie mode</b><span>Pwedeng bumoto sa sarili.</span></button></div></section>';
   h += '<section class="panel"><h2>Pampasaya</h2><div class="seg">'
-    + tog('dr', g.dr, 'Hamon sa pinaka-binoto', 'May dare o hot seat na tanong para sa pinaka-binoto. Pwedeng mag-pass.', dis)
+    + tog('dr', g.dr, 'Hulaan Challenge', 'Huhulaan ng pinaka-binoto kung sino-sino ang bumoto sa kanya. Mali: siya ang may challenge. Tama: ang mga bumoto.', dis)
     + tog('wr', g.wr, 'Wild rounds', 'Paminsan-minsan, may Double Points o Baliktad na round.', dis)
     + ((g.cq && g.cq.length) ? tog('cqon', g.cqon !== 0, 'Isama ang tanong ng barkada (' + g.cq.length + ')', 'Ihahalo sa mga tanong ng napiling deck.', dis) : '')
     + '</div><p class="label">Bilis Bumoto</p><div class="decks">'
@@ -760,7 +755,7 @@ function revealHtml(c, host){
   else verdict = nm(g.wn) + (g.wn.length > 1 ? ' ang magkahati sa black card.' : ' ang kumuha ng black card.');
   if(g.wd === 'x2' && g.wn.length && g.md !== 'x') verdict += ' Doble ang puntos!';
   var h = '<div class="round"><b>' + roundLabel(g) + '</b><span class="muted small">' + g.tv + ' ang boto</span></div>' + wildHtml(g) + qcard(g, true) + '<p class="verdict">' + verdict + '</p>';
-  if(g.dare){ h += '<div class="dare"><span class="label">' + (g.dare.k === 'hot' ? 'Hot seat' : 'Hamon') + ' para kay ' + nm(topsOf(g)) + '</span><p>' + esc(g.dare.t) + '</p><span class="muted small">Pwedeng mag-pass.</span></div>'; }
+  h += dareHtml(g, c, nm);
   var max = Math.max.apply(null, ids.map(function(i){ return g.rs[i]; }).concat([1]));
   h += '<section class="panel res' + (first ? ' anim' : '') + '">';
   ids.forEach(function(pid){
@@ -771,7 +766,7 @@ function revealHtml(c, host){
       var vs = Object.keys(g.vt).filter(function(v){ return g.vt[v] === pid; });
       h += '<div class="voters">' + vs.map(function(v){ var vc = colorOf(v,c); return '<span class="vch" style="background:' + vc.bg + ';color:' + vc.fg + '">' + esc(nameOf(v,c)) + '</span>'; }).join('') + '</div>';
     }
-    if(g.sh && g.gr && g.gr[pid]){ var gg = g.gr[pid]; h += '<div class="small ' + (gg.ok ? 'gok' : 'muted') + '">Hula niya: ' + esc(nameOf(gg.g,c)) + ' · ' + (gg.ok ? 'Tama!' : 'Mali') + '</div>'; }
+    if(g.sh && g.gr && g.gr[pid]){ var gg = g.gr[pid]; h += '<div class="small ' + (gg.ok ? 'gok' : 'muted') + '">Hula niya: ' + gg.g.map(function(x){ return esc(nameOf(x,c)); }).join(', ') + ' · ' + (gg.ok ? 'Tama!' : 'Mali') + '</div>'; }
     h += '</div>';
   });
   if(zero.length) h += '<p class="muted small">Walang boto: ' + nm(zero) + '</p>';
@@ -782,10 +777,10 @@ function revealHtml(c, host){
     else {
       var rec = g.od.filter(function(p){ return (g.rs[p] || 0) > 0; }), dn = rec.filter(function(p){ return g.gv && g.gv[p]; }).length;
       if(iGot){
-        var mg = host ? guesses[myPid] : (myGuess && myGuess.rd === g.rd ? myGuess.g : null);
-        h += '<p class="label">Hulaan: sino ang bumoto sa iyo? Isang hula lang, pwede pang baguhin.</p><div class="tiles">' + g.od.filter(function(p){ return p !== myPid; }).map(function(p){
+        var mg = (host ? guesses[myPid] : (myGuess && myGuess.rd === g.rd ? myGuess.g : null)) || [];
+        h += '<p class="label">Hulaan: sino-sino ang bumoto sa iyo? Pumili ng ' + g.rs[myPid] + '. Pwede pang baguhin.</p><div class="tiles">' + g.od.filter(function(p){ return p !== myPid; }).map(function(p){
           var col = colorOf(p,c);
-          return '<button class="tile" data-act="guess" data-pid="' + esc(p) + '" style="background:' + col.bg + ';color:' + col.fg + '" aria-pressed="' + (mg === p) + '">' + avHtml(p,32,c) + '<span>' + esc(nameOf(p,c)) + '</span><small>Hula mo</small></button>';
+          return '<button class="tile" data-act="guess" data-pid="' + esc(p) + '" style="background:' + col.bg + ';color:' + col.fg + '" aria-pressed="' + (mg.indexOf(p) > -1) + '">' + avHtml(p,32,c) + '<span>' + esc(nameOf(p,c)) + '</span><small>Hula mo</small></button>';
         }).join('') + '</div>';
       } else h += '<p class="muted center small">Naghuhulaan ang mga nakatanggap ng boto...</p>';
       h += '<p class="muted center small">' + dn + ' sa ' + rec.length + ' ang nakahula</p>';
@@ -795,6 +790,14 @@ function revealHtml(c, host){
   if(host) h += '<div class="dock">' + (!g.sh && !g.gs ? '<button class="btn alt block" data-act="gstart">Simulan ang hulaan</button>' : '') + (!g.sh ? '<button class="btn' + (g.gs ? '' : ' alt') + ' block" data-act="show">Ibunyag kung sino ang bumoto</button>' : '') + '<button class="btn' + (g.sh ? '' : ' alt') + ' block" data-act="next">' + (g.fin || g.ptr + 1 >= g.pn ? 'Tingnan ang panalo' : 'Susunod na tanong') + '</button></div>';
   else h += '<div class="wait">Hinihintay ang host...</div>';
   return h;
+}
+function dareHtml(g, c, nm){
+  if(!g.dare) return '';
+  var tn = nm(topsOf(g));
+  if(!g.sh || !g.dres) return '<div class="dare"><span class="label">Hulaan Challenge</span><p>Mahuhulaan mo ba kung sino-sino ang bumoto sa iyo, ' + tn + '?</p><span class="muted small">Mali o kulang ang hula: ikaw ang gagawa ng challenge. Tama lahat: ang mga bumoto sa iyo ang gagawa.</span></div>';
+  return '<div class="dare"><span class="label">Challenge card</span><p>' + esc(g.dare.t) + '</p>' + g.dres.map(function(r){
+    return '<span class="small">' + (r.ok ? esc(nameOf(r.p,c)) + ' ay nahulaan lahat! Ang gagawa: ' : 'Nagkamali si ' + esc(nameOf(r.p,c)) + '. Siya ang gagawa: ') + r.who.map(function(w){ return '<b>' + esc(nameOf(w,c)) + '</b>'; }).join(', ') + '</span>';
+  }).join('') + '<span class="muted small">Pwedeng mag-pass kung talagang ayaw.</span></div>';
 }
 function titlesFor(g){
   var st = g.st || {}, cands = [], perDeck = {}, tot = [], wl = [], hsA = [];
@@ -951,7 +954,7 @@ function popFor(c, o){
   el.innerHTML = '<canvas aria-hidden="true"></canvas><div class="popcard"><div class="kick">' + esc(o.kick) + '</div>'
     + '<div class="popwho"><div class="names">' + tops.map(function(k){ return '<div class="one">' + avHtml(k, size, c) + '<div class="name">' + esc(nameOf(k, c)) + '</div></div>'; }).join('') + '</div>'
     + '<div class="cnt">' + esc(o.cnt) + '</div></div>'
-    + (o.dare ? '<div class="popdare"><b>' + (o.dare.k === 'hot' ? 'Hot seat' : 'Hamon') + ':</b> ' + esc(o.dare.t) + '</div>' : '')
+    + (o.dare ? '<div class="popdare"><b>Hulaan Challenge:</b> ' + esc(o.dare.t) + '</div>' : '')
     + (o.sub ? '<p class="popq">' + esc(o.sub) + '</p>' : '')
     + '<button class="btn" data-act="closepop">' + esc(o.btn || 'Tingnan ang resulta') + '</button></div>';
   document.body.appendChild(el);
@@ -966,7 +969,7 @@ function showPop(c){
   if(!tops.length) return;
   var black = g.md === 'c' && tops.some(function(k){ return g.wn.indexOf(k) > -1; });
   var kick = g.wd === 'rev' ? 'Ang pinaka-HINDI' : black ? 'Black card!' : (g.md === 'm' ? 'Panalo sa round' : 'Ang pinaka-binoto');
-  popFor(c, {kick:kick, tops:tops, cnt:g.rs[tops[0]] + ' boto' + (tops.indexOf(myPid) > -1 ? '. Ikaw ang napili ng barkada!' : ''), sub:qInfo(g).t, dare:g.dare || null});
+  popFor(c, {kick:kick, tops:tops, cnt:g.rs[tops[0]] + ' boto' + (tops.indexOf(myPid) > -1 ? '. Ikaw ang napili ng barkada!' : ''), sub:qInfo(g).t, dare:g.dare ? {t:'Mahuhulaan mo ba kung sino-sino ang bumoto sa iyo? Mali, ikaw ang may challenge. Tama, sila ang gagawa!'} : null});
 }
 function showEndPop(c){
   var g = c.g; if(g.md === 'x') return;
@@ -1044,9 +1047,12 @@ document.addEventListener('click', function(e){
   else if(a === 'cqadd'){ cqAdd(); }
   else if(a === 'cqdel'){ cqDel(t.getAttribute('data-id')); }
   else if(a === 'guess'){
-    var gp = t.getAttribute('data-pid');
-    if(host) guessFor(myPid, G.rd, gp);
-    else if(conn && conn.open && S){ myGuess = {rd:S.g.rd, g:gp}; try{ conn.send({t:'guess', rd:S.g.rd, g:gp}); }catch(err){} render(); }
+    var gp = t.getAttribute('data-pid'), c0 = cur(); if(!c0) return;
+    var g0 = c0.g, arr0 = host ? (guesses[myPid] || []) : (myGuess && myGuess.rd === g0.rd ? myGuess.g : []), nx = arr0.slice(), ix = nx.indexOf(gp), need0 = g0.rs ? (g0.rs[myPid] || 0) : 0;
+    if(ix > -1) nx.splice(ix, 1);
+    else { if(nx.length >= need0){ toast('Hanggang ' + need0 + ' lang ang pwedeng piliin'); return; } nx.push(gp); }
+    if(host) guessFor(myPid, G.rd, nx);
+    else if(conn && conn.open){ myGuess = {rd:g0.rd, g:nx}; try{ conn.send({t:'guess', rd:g0.rd, g:nx}); }catch(err){} render(); }
   }
   else if(a === 'copyrecap'){
     var cc2 = cur(); if(!cc2) return;
