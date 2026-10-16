@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="fil">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#D9145A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Boto Na, Bes!">
+<title>Boto Na, Bes!</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%2317121F'/%3E%3Cpath d='M3 5h4.6L12 14.5 16.4 5H21l-9 15z' fill='%23FF5A91'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%2317121F'/%3E%3Cpath d='M3 5h4.6L12 14.5 16.4 5H21l-9 15z' fill='%23FF5A91'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+
+/* Layout: one phone-width column. Top bar, a stack of panels per screen, a sticky action dock for the host. */
+:root{
+  --bg:#F4F1F8; --surface:#FFFFFF; --ink:#17121F; --muted:#665E74; --line:#DDD6E8;
+  --accent:#D9145A; --accent-ink:#FFFFFF; --card:#17121F; --card-ink:#FFFFFF;
+  --ok:#17803F; --warn:#9A5B00; --warn-bg:#FFF1D6;
+  --f-display:'Bricolage Grotesque','Arial Black',system-ui,sans-serif;
+  --f-body:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14101B; --surface:#1F1A29; --ink:#F3EFFA; --muted:#A79DB8; --line:#372F48;
+    --accent:#FF5A91; --accent-ink:#1A0710; --card:#2B2340; --card-ink:#FFFFFF;
+    --ok:#4CD487; --warn:#F2B34C; --warn-bg:#3A2D12; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14101B; --surface:#1F1A29; --ink:#F3EFFA; --muted:#A79DB8; --line:#372F48;
+  --accent:#FF5A91; --accent-ink:#1A0710; --card:#2B2340; --card-ink:#FFFFFF;
+  --ok:#4CD487; --warn:#F2B34C; --warn-bg:#3A2D12; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0;
+}
+.shell{max-width:520px;margin:0 auto;padding-block:10px 24px;display:flex;flex-direction:column;gap:16px;min-height:100%}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3,p{margin:0}
+.muted{color:var(--muted)}
+.center{text-align:center}
+.small{font-size:14px}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px}
+.brand{display:flex;align-items:center;gap:8px;font:800 17px var(--f-display);letter-spacing:.02em}
+.top-right{display:flex;align-items:center;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 12px;background:var(--surface);border:1px solid var(--line);font-weight:600;font-size:14px;min-height:34px}
+button.chip{cursor:pointer}
+
+.hero h1{font:800 clamp(52px,17vw,84px)/.86 var(--f-display);letter-spacing:-.02em;text-transform:uppercase}
+.hero h1 span{display:block;color:var(--accent)}
+.hero p{margin-top:14px;font-size:18px;max-width:30ch}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.panel h2{font:800 20px var(--f-display)}
+.label{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.field{width:100%;min-height:52px;border-radius:14px;border:2px solid var(--line);background:var(--bg);padding:0 14px;font-size:17px;font-weight:600}
+.field:focus{border-color:var(--accent);outline:none}
+.codefield{text-transform:uppercase;letter-spacing:.3em;text-align:center;font-family:var(--f-display);font-size:22px}
+.row{display:flex;gap:10px;align-items:stretch}
+.row>*{min-width:0}
+.row .field{flex:1}
+
+.btn{appearance:none;border:0;border-radius:14px;min-height:52px;padding:0 20px;font-weight:700;font-size:17px;background:var(--accent);color:var(--accent-ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.block{width:100%}
+.btn.alt{background:var(--surface);color:var(--ink);border:2px solid var(--ink)}
+.btn.text{background:none;color:var(--muted);min-height:44px;padding:0 10px;font-weight:600}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.err{color:var(--accent);font-weight:600;font-size:14px;min-height:0}
+.notice{background:var(--warn-bg);color:var(--warn);border-radius:14px;padding:12px 14px;font-size:14px;font-weight:600}
+
+details.rules{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:0 16px}
+details.rules summary{min-height:52px;display:flex;align-items:center;font-weight:700;cursor:pointer}
+details.rules div{padding-bottom:14px;display:flex;flex-direction:column;gap:8px;font-size:15px}
+
+.roomcode{font:800 clamp(44px,15vw,64px)/1 var(--f-display);letter-spacing:.14em;text-align:center;user-select:all;padding:6px 0 6px .14em}
+.players{display:flex;flex-wrap:wrap;gap:8px}
+.pl{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:6px 14px 6px 8px;background:var(--bg);border:1px solid var(--line);font-weight:600}
+.dot{width:20px;height:20px;border-radius:50%;flex:none}
+.tag{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+.decks{display:flex;flex-wrap:wrap;gap:8px}
+.deck{appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:8px 14px;border:2px solid var(--line);background:var(--bg);font-weight:600;font-size:14px;min-height:40px}
+.deck i{width:12px;height:12px;border-radius:3px;display:block}
+.deck[aria-pressed="true"]{border-color:var(--ink);background:var(--surface)}
+.deck[aria-pressed="false"]{opacity:.55}
+.deck[disabled]{cursor:default}
+.seg{display:grid;gap:8px}
+.opt{appearance:none;cursor:pointer;text-align:left;border-radius:14px;border:2px solid var(--line);background:var(--bg);padding:10px 14px;min-height:56px;display:flex;flex-direction:column;justify-content:center}
+.opt b{font-size:16px}.opt span{font-size:13px;color:var(--muted)}
+.opt[aria-pressed="true"]{border-color:var(--ink);background:var(--surface)}
+.opt[disabled]{cursor:default}
+
+.score{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.sc{flex:none;display:flex;align-items:center;gap:7px;border-radius:12px;padding:6px 12px 6px 7px;background:var(--surface);border:1px solid var(--line);font-weight:700;font-size:14px}
+.sc b{font:800 18px var(--f-display);font-variant-numeric:tabular-nums}
+.round{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.round b{font:800 15px var(--f-display);letter-spacing:.04em;text-transform:uppercase}
+
+.qcard{background:var(--card);color:var(--card-ink);border-radius:22px;padding:22px 20px 14px;min-height:190px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;border:1px solid var(--line)}
+.qtext{font:800 clamp(23px,6.4vw,30px)/1.14 var(--f-display);text-wrap:balance}
+.qfoot{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.75}
+.qcard.small{min-height:0;padding:16px 16px 12px}
+.qcard.small .qtext{font-size:19px}
+
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{appearance:none;border:0;cursor:pointer;border-radius:16px;min-height:82px;padding:10px 12px;font:800 20px/1.1 var(--f-display);display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;text-align:left;overflow-wrap:anywhere}
+.tile small{font:700 12px var(--f-body);letter-spacing:.06em;text-transform:uppercase;opacity:0}
+.tile[aria-pressed="true"]{outline:4px solid var(--ink);outline-offset:3px}
+.tile[aria-pressed="true"] small{opacity:.9}
+.tile[disabled]{cursor:default}
+
+.res{display:flex;flex-direction:column;gap:12px}
+.rr{display:flex;flex-direction:column;gap:6px}
+.rh{display:flex;align-items:center;gap:8px;font-weight:700}
+.rh .n{flex:1;min-width:0;overflow-wrap:anywhere}
+.rh .c{font:800 22px var(--f-display);font-variant-numeric:tabular-nums}
+.track{height:18px;border-radius:9px;background:var(--bg);overflow:hidden;border:1px solid var(--line)}
+.fill{height:100%;border-radius:9px;width:0}
+.anim .fill{transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.badge{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:var(--bg);border-radius:6px;padding:3px 7px}
+.voters{display:flex;flex-wrap:wrap;gap:6px}
+.vch{font-size:13px;font-weight:700;border-radius:999px;padding:3px 10px}
+.verdict{font:800 20px/1.2 var(--f-display);text-wrap:balance}
+
+.winner{font:800 clamp(40px,13vw,60px)/.95 var(--f-display);text-transform:uppercase;text-wrap:balance}
+.dock{position:sticky;bottom:0;display:flex;flex-direction:column;gap:8px;padding:12px 0 8px;background:linear-gradient(to top,var(--bg) 70%,transparent)}
+.wait{display:flex;align-items:center;justify-content:center;gap:10px;min-height:52px;color:var(--muted);font-weight:600}
+
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.tabs .deck{flex:none}
+.qlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.qlist li{padding:14px 0;border-top:1px solid var(--line);font-size:17px;font-weight:500;display:flex;gap:12px;align-items:flex-start}
+.qlist li:first-child{border-top:0}
+.qlist li i{width:10px;height:10px;border-radius:3px;margin-top:8px;flex:none}
+
+#toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:calc(100% - 32px);z-index:10}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion: reduce){.anim .fill,#toast{transition:none}}
+
+html{-webkit-text-size-adjust:100%}
+body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);min-height:100vh}
+.nameRow{display:flex;gap:8px;align-items:center}
+.nameRow .field{flex:1;min-width:0}
+.xbtn{appearance:none;border:2px solid var(--line);background:var(--bg);border-radius:12px;width:52px;min-height:52px;font-size:22px;cursor:pointer;color:var(--muted)}
+.big{font:800 clamp(40px,13vw,64px)/.95 var(--f-display);text-transform:uppercase;text-wrap:balance;overflow-wrap:anywhere}
+.passbox{align-items:center;text-align:center;gap:14px;padding:26px 16px}
+.swatch{width:64px;height:64px;border-radius:50%}
+.hint{background:var(--warn-bg);color:var(--warn);border-radius:14px;padding:10px 14px;font-size:14px;font-weight:600;text-align:center}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="top" id="top"></header>
+  <main id="app" style="display:flex;flex-direction:column;gap:16px"></main>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+'use strict';
+var DECKS = [{"name": "Main Deck", "sub": "Barkada, buhay at kilig", "col": "#E53935", "qs": ["Sino ang laging \"Otw na\" pero hindi pa naliligo?", "Sino ang may 12,000 unread messages at 47 group chats na naka-mute?", "Sino ang laging \"Last na 'to, uwi na ako\" pero mauuna pang um-order ng isa pang round?", "Sino ang nag-seen lang sa group chat pero buhay na buhay sa TikTok?", "Sino ang pinaka-mabilis mag-\"Sorry, di ako makakapunta, may lagnat ako\" pero nasa mall pala?", "Sino ang ililibre ng lahat dahil \"wala akong pera\" pero may bagong sapatos?", "Sino ang may screenshot ng chat ninyo at handang i-expose kapag nagka-away?", "Sino ang \"5 minutes lang\" daw pero 2 oras kung mag-ayos?", "Sino ang may pinakamaraming utang sa SPayLater at GLoan?", "Sino ang gumawa ng group project nang mag-isa habang 4 na iba ay nag-\"Thank you po\"?", "Sino ang pinaka-malamang mag-resign dahil sa toxic na boss?", "Sino ang gagastos ng buong sahod sa Shopee 11.11 at mangangailangan ng pambili ng ulam sa 12.12?", "Sino ang pinaka-malamang maging boss ng barkada in 10 years?", "Sino ang nag-aral lang noong gabi bago ang exam at mataas pa rin ang nakuha?", "Sino ang may pinakamaraming finsta o dummy account?", "Sino ang unang mag-viral dahil sa isang nakakahiyang video?", "Sino ang nagta-type ng \"HAHAHAHA\" pero seryoso lang ang mukha?", "Sino ang nag-stalk sa ex ng crush niya at alam na ang buong kasaysayan nito?", "Sino ang magiging influencer at maglalagay ng \"link in bio\" sa lahat ng bagay?", "Sino ang may pinakamaraming \"Seen\" na hindi nire-replyan?", "Sino ang laging pinapagalitan ni Mama kahit 25 years old na?", "Sino ang magdadala ng sariling tupperware sa handaan \"para may baon\"?", "Sino ang laging sumasakay ng Grab kahit 5 minutes lang naman ang lakad?", "Sino ang magsasabing \"Ako na lang kukuha\" pero dalawang plato ang iuuwi?", "Sino ang pinaka-natatakot sa EDSA traffic pero araw-araw pa ring nandoon?", "Sino ang mauunang umiyak sa isang teleserye o K-drama?", "Sino ang may \"situationship\" na mahigit isang taon na?", "Sino ang laging \"kaibigan lang\" sa nililigawan niya?", "Sino ang hindi pa rin nakaka-move on sa ex niya?", "Sino ang pinaka-malamang umiyak sa kasal ng barkada?", "Sino ang nagsasabing \"Diet na ako bukas\" araw-araw?", "Sino ang laging nakakalimot ng password sa sarili niyang account?", "Sino ang may phone na 2% na lang pero ayaw pa ring mag-charge?", "Sino ang nag-text ng \"Gising ka pa?\" sa maling tao?", "Sino ang nag-mute ng group chat pero siya pa ang unang nagtatanong ng \"Ano nangyari?\"", "Sino ang may Notes app na puno ng drafts na hindi na kailanman ipo-post?"]}, {"name": "Spicy Deck", "sub": "Para sa matatapang", "col": "#D81B60", "qs": ["Sino ang may pinakamalaking red flag pero ayaw aminin?", "Sino ang unang ikakasal sa taong hindi pa nila nakikilala?", "Sino ang pinaka-malamang mag-\"Wala akong sinabi\" pero siya naman ang nagsimula ng chismis?", "Sino ang may secret crush sa isa sa inyo dito ngayon?", "Sino ang pinaka-hirap magsabi ng \"I love you\"?", "Sino ang nag-ghost ng taong halos jowa na?", "Sino ang may pinaka-nakakahiyang search history?", "Sino ang pinaka-malamang ma-late sa sarili niyang kasal?", "Sino ang may Close Friends story na ayaw ipakita sa lahat?", "Sino ang pinaka-malamang makipagbalikan sa ex pagkatapos ng 3 inuman?", "Sino ang nag-text ng \"Wrong send po\" pero sinadya talaga?", "Sino ang pinaka-malamang sumigaw ng \"Hindi ako lasing!\" habang lasing?"]}, {"name": "Bahala Ka Na", "sub": "Mas malikhain at mas chaotic", "col": "#FB8C00", "qs": ["Sino ang pinaka-malamang mag-viral dahil sa sobrang emosyonal na videoke performance?", "Sino ang hindi kayang mabuhay nang walang milk tea?", "Sino ang may pinakamaraming utang sa Tita nila?", "Sino ang pinaka-malamang umiyak kapag may nag-surprise sa birthday niya?", "Sino ang unang susuko kapag hiking ang usapan?", "Sino ang hindi pa rin nakaka-move on mula sa online class days?", "Sino ang modern-day tsismosa ng barangay?", "Sino ang pinaka-malamang ma-late dahil nakatulog ulit pagkatapos patayin ang alarm?", "Sino ang may pinakamasamang ugali pagdating sa hatian ng bill sa restaurant?", "Sino ang agad nagkaka-crush sa kahit sinong marunong mag-gitara?", "Sino ang hindi marunong magsaing kahit 25 na?", "Sino ang magiging pinaka-successful kapag nagtayo ng online selling business?", "Sino ang pinaka-malamang magpa-tattoo ng pangalan ng jowa?", "Sino ang laging may dalang powerbank, charger, at extension cord?", "Sino ang hindi makakatulog kapag walang Wi-Fi?", "Sino ang pinaka-malamang manalo sa Pinoy Henyo?", "Sino ang mauunang mag-asawa sa barkada?", "Sino ang mauunang mag-abroad at magpapadala ng balikbayan box?", "Sino ang magiging pinaka-strict na magulang?", "Sino ang magiging paboritong tito o tita ng lahat ng pamangkin?", "Sino ang pinaka-malamang maging kapitan ng barangay?", "Sino ang magkakaroon ng pinakamaraming alagang pusa pagdating ng 40?", "Sino ang pinaka-malamang makalimot ng PIN ng sarili niyang ATM?", "Sino ang magbebenta ng lahat ng gamit at lilipat sa probinsya para mag-farm?"]}, {"name": "Pop Culture", "sub": "K-pop, TikTok at teleserye", "col": "#8E24AA", "qs": ["Sino ang may pinakamaraming nabiling merch ng K-pop group?", "Sino ang nag-queue ng 8 oras para sa concert tickets pero wala pa ring nakuha?", "Sino ang nanood ng buong season ng K-drama sa isang upuan?", "Sino ang laging may hot take sa X na pinagsisisihan kinabukasan?", "Sino ang gumagawa ng dance challenge sa TikTok kahit walang nanonood?", "Sino ang may Spotify Wrapped na nakakahiyang ipakita?", "Sino ang pinaka-malamang maging housemate sa PBB?", "Sino ang nag-cancel ng Netflix pero gumagamit pa rin ng account ng kaibigan?", "Sino ang may pinakamagandang boses sa videoke?", "Sino ang nagpa-aesthetic ng buong kwarto dahil sa Pinterest pero magulo pa rin ang kama?", "Sino ang unang bumili ng bagong iPhone kahit may utang pa sa luma?", "Sino ang laging may \"pasabuy\" na order sa kahit anong biyahe?"]}, {"name": "Office at School", "sub": "Para sa estudyante at empleyado", "col": "#1E88E5", "qs": ["Sino ang \"present po\" pero tulog sa Zoom class?", "Sino ang nag-submit ng requirements 1 minute bago ang deadline?", "Sino ang laging nagtatanong ng \"May assignment ba?\" pagpasok pa lang sa klase?", "Sino ang pinaka-malamang mag-cram ng thesis sa huling gabi?", "Sino ang may pinaka-aesthetic na planner pero walang laman?", "Sino ang nagse-send ng \"Per my last email\" sa tonong galit?", "Sino ang magiging pinaka-strict na professor?", "Sino ang magsasalita sa meeting nang naka-mute at hindi alam?", "Sino ang mauunang ma-promote kahit paborito ang matulog sa office?", "Sino ang nag-\"Good morning po\" sa group chat ng opisina na walang sumasagot?", "Sino ang nagkunwaring may bad connection para makaiwas sa recitation?", "Sino ang magiging CEO ng startup na hindi pa alam kung ano ang ibebenta?"]}, {"name": "Pamilya at Pinoy Life", "sub": "Handaan, jeep at Lola", "col": "#43A047", "qs": ["Sino ang uuwi ng probinsya na may dalang tatlong sakong pasalubong?", "Sino ang laging pinupuna ni Lola na \"pumayat ka\" o \"tumaba ka\"?", "Sino ang naka-tsinelas kahit saan pumunta?", "Sino ang nag-aaway sa family group chat dahil sa politika?", "Sino ang nag-iipon ng plastic bag \"baka kailanganin\"?", "Sino ang pinaka-malamang humingi pa rin ng pamasko kahit matanda na?", "Sino ang pinakamalakas ang boses sa videoke tuwing handaan?", "Sino ang laging nalalampasan ang babaan sa jeep?", "Sino ang laging tinatanong ng \"Kailan ka mag-aasawa?\" tuwing reunion?", "Sino ang gagawing hapunan ang tirang ulam kahapon at sasabihing \"mas masarap na\"?", "Sino ang pinaka-malamang maging OFW ng barkada?", "Sino ang magbibigay ng \"noong kabataan ko\" speech pagdating ng 40?"]}, {"name": "Pagkain at Gala", "sub": "Foodtrip at out-of-town", "col": "#00897B", "qs": ["Sino ang hindi kayang tanggihan ang unli rice?", "Sino ang may pinakamaraming food delivery orders ngayong linggo?", "Sino ang laging nagsha-share ng pagkain pero kinukuha ang pinakamalaki?", "Sino ang magsasabing \"Di ako gutom\" tapos uubusin ang fries mo?", "Sino ang pinakamahina sa anghang pero laging nagpapa-extra spicy?", "Sino ang may pinakamaraming food pics pero hindi nagbabayad ng share?", "Sino ang sasama sa gala pero uuwi pagkalipas ng 30 minuto?", "Sino ang magpaplano ng out-of-town trip na hindi matutuloy kailanman?", "Sino ang magbo-book ng seat sale flight pero hindi makakasakay?", "Sino ang magpapa-picture muna sa pagkain bago kumain kahit malamig na?", "Sino ang magdadala ng sariling sili at toyo sa restaurant?", "Sino ang laging \"Libre mo ako, babawi ako\" pero hindi na bumabawi?"]}, {"name": "Throwback", "sub": "Kabataan at lockdown days", "col": "#6D4C41", "qs": ["Sino ang ginawang personalidad ang pag-rank up sa Mobile Legends?", "Sino ang nagpasa ng chain message sa Messenger at natakot kapag hindi nag-forward?", "Sino ang may pinaka-nakakahiyang lumang Facebook post?", "Sino ang nakipag-patintero hanggang gabi at pinagalitan?", "Sino ang tumakbo sa kalsada habang naglalaro ng Pokemon Go?", "Sino ang may koleksyon ng stickers o tazos noong bata?", "Sino ang nanonood pa rin ng cartoons tuwing Sabado ng umaga?", "Sino ang nagpa-load ng Unli Text para lang makausap ang crush?", "Sino ang may yearbook photo na ayaw ipakita kahit kanino?", "Sino ang tatakbo agad pagnarinig ang tunog ng sorbetero?", "Sino ang nag-online class habang nakahiga sa kama?", "Sino ang may pinaka-nakakahiyang TikTok dance noong lockdown?"]}];
+var COLORS = [
+  {bg:'#E53935',fg:'#FFFFFF'},{bg:'#FB8C00',fg:'#1B1200'},{bg:'#FDD835',fg:'#1B1700'},
+  {bg:'#43A047',fg:'#FFFFFF'},{bg:'#00897B',fg:'#FFFFFF'},{bg:'#1E88E5',fg:'#FFFFFF'},
+  {bg:'#3949AB',fg:'#FFFFFF'},{bg:'#8E24AA',fg:'#FFFFFF'},{bg:'#D81B60',fg:'#FFFFFF'},{bg:'#6D4C41',fg:'#FFFFFF'}
+];
+var Q = [];
+DECKS.forEach(function(d,di){ d.qs.forEach(function(t){ Q.push({t:t,d:di}); }); });
+var app = document.getElementById('app'), top = document.getElementById('top'), toastEl = document.getElementById('toast');
+var KEY = 'bnb_solo_v1';
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function clean(s){ return String(s==null?'':s).replace(/[\u0000-\u001f\u007f-\u009f​-‏‪-‮⁠-⁯﻿]/g,'').replace(/\s+/g,' ').trim().slice(0,14); }
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function toast(m){ toastEl.textContent = m; toastEl.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(function(){ toastEl.classList.remove('on'); }, 2400); }
+function mulberry(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+function fresh(){ return {ph:'setup', names:['','','',''], dk:DECKS.map(function(d,i){ return i; }), md:'c', sf:0}; }
+function load(){
+  var raw = lsGet(KEY); if(!raw) return null;
+  try{ var o = JSON.parse(raw); if(o && o.ph && Array.isArray(o.names) && Array.isArray(o.dk)) return o; }catch(e){}
+  return null;
+}
+var S = load() || fresh();
+var view = 'main', browseDeck = 0, armEnd = 0, animKey = '';
+function save(){ lsSet(KEY, JSON.stringify(S)); }
+
+function pile(){
+  var idx = []; Q.forEach(function(q,i){ if(S.dk.indexOf(q.d) > -1) idx.push(i); });
+  var r = mulberry(S.seed);
+  for(var i = idx.length - 1; i > 0; i--){ var j = Math.floor(r() * (i + 1)); var t = idx[i]; idx[i] = idx[j]; idx[j] = t; }
+  return idx;
+}
+function pickQ(){ var p = pile(); return p.length ? p[S.ptr % p.length] : 0; }
+function col(i){ return COLORS[i % COLORS.length]; }
+
+/* ---------- game logic ---------- */
+function startGame(){
+  var names = S.names.map(clean).filter(Boolean);
+  if(names.length < 3){ toast('Kailangan ng 3 o higit pang players'); return; }
+  if(!S.dk.length){ toast('Pumili ng kahit isang deck'); return; }
+  var seen = {};
+  names = names.map(function(n){ var k = n.toLowerCase(); seen[k] = (seen[k] || 0) + 1; return seen[k] > 1 ? n.slice(0,12) + ' ' + seen[k] : n; });
+  S.od = names.slice(0,10); S.sc = S.od.map(function(){ return 0; });
+  S.seed = (Math.random() * 1e9) | 0; S.ptr = 0; S.rd = 1; S.ak = 0; S.q = pickQ();
+  S.tg = S.md === 'm' ? 10 : 6;
+  newRound(true); save(); render();
+}
+function newRound(first){
+  S.ph = 'vote'; S.step = 'pass'; S.vi = 0; S.votes = []; S.sel = null; S.sh = 0; S.fin = 0; S.rs = null; S.wn = null;
+}
+function voter(){ return (S.ak + S.vi) % S.od.length; }
+function doReveal(){
+  var n = S.od.length, rs = S.od.map(function(){ return 0; }), tv = 0;
+  S.votes.forEach(function(t){ if(t != null){ rs[t]++; tv++; } });
+  S.rs = rs; S.tv = tv;
+  S.wn = rs.map(function(c,i){ return (c > 0 && c * 2 >= tv) ? i : -1; }).filter(function(i){ return i > -1; });
+  if(S.md === 'c') S.wn.forEach(function(w){ S.sc[w]++; });
+  if(S.md === 'm') S.votes.forEach(function(t,v){ if(S.wn.indexOf(t) > -1) S.sc[v]++; });
+  S.fin = (S.md !== 'x' && S.sc.some(function(c){ return c >= S.tg; })) ? 1 : 0;
+  S.ph = 'reveal'; S.sh = 0;
+}
+function nextRound(){
+  if(S.fin){ S.ph = 'end'; save(); render(); return; }
+  S.rd++; S.ptr++; S.ak = (S.ak + 1) % S.od.length; S.q = pickQ(); newRound(); save(); render(); window.scrollTo(0,0);
+}
+
+/* ---------- html ---------- */
+function topHtml(){
+  var right = '';
+  if(view === 'browse') right = '<button class="chip" data-act="back">Balik</button>';
+  else if(S.ph !== 'setup') right = '<button class="chip" data-act="reset">' + (armEnd ? 'Sigurado ka?' : 'Bagong laro') + '</button>';
+  return '<div class="brand"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M1.5 3h6.2L12 14.2 16.3 3h6.2L15 21h-6z" fill="var(--accent)"/></svg>BOTO NA, BES!</div><div class="top-right">' + right + '</div>';
+}
+function setupHtml(){
+  var h = '<section class="hero"><h1>Boto<span>na, bes!</span></h1><p>Ang party game na maglalabas ng totoong tea tungkol sa barkada mo. Isang phone, ipapasa sa lahat.</p></section>';
+  h += '<section class="panel"><h2>Sino ang maglalaro?</h2><p class="muted small">3 hanggang 10 players. Umupo nang pabilog para madaling ipasa ang phone.</p>';
+  S.names.forEach(function(n,i){
+    h += '<div class="nameRow"><input class="field" id="n' + i + '" maxlength="14" autocomplete="off" placeholder="Player ' + (i + 1) + '" value="' + esc(n) + '" aria-label="Pangalan ng player ' + (i + 1) + '">'
+      + (S.names.length > 3 ? '<button class="xbtn" data-act="del" data-i="' + i + '" aria-label="Alisin si player ' + (i + 1) + '">&times;</button>' : '') + '</div>';
+  });
+  if(S.names.length < 10) h += '<button class="btn alt block" data-act="add">Dagdag na player</button>';
+  h += '</section>';
+  var total = 0; Q.forEach(function(q){ if(S.dk.indexOf(q.d) > -1) total++; });
+  h += '<section class="panel"><h2>Mga deck</h2><div class="decks">';
+  DECKS.forEach(function(d,i){ h += '<button class="deck" data-act="deck" data-i="' + i + '" aria-pressed="' + (S.dk.indexOf(i) > -1) + '"><i style="background:' + d.col + '"></i>' + esc(d.name) + ' (' + d.qs.length + ')</button>'; });
+  h += '</div><p class="muted small">' + total + ' na tanong ang sasali.</p></section>';
+  h += '<section class="panel"><h2>Paraan ng laro</h2><div class="seg">'
+    + opt('c','Classic','Black card sa nakakuha ng kalahati ng boto. Unang makaabot ng 6, panalo.')
+    + opt('m','Majority','Puntos para sa bawat bumoto sa nanalo. Unang makaabot ng 10, panalo.')
+    + opt('x','Chill','Walang score. Kwentuhan lang.')
+    + '<button class="opt" data-act="selfie" aria-pressed="' + !!S.sf + '"><b>Selfie mode</b><span>Pwedeng bumoto sa sarili.</span></button></div></section>';
+  h += '<div class="dock"><button class="btn block" data-act="start">Simulan ang laro</button></div>';
+  h += '<button class="btn alt block" data-act="browse">Tingnan ang ' + Q.length + ' na tanong</button>';
+  h += '<details class="rules"><summary>Paano laruin</summary><div>'
+    + '<p><b>1.</b> Babasahin nang malakas ang tanong na "Sino...?"</p>'
+    + '<p><b>2.</b> Ipapasa ang phone. Bawat isa ay pipili ng taong sagot nang pasikreto, pati ang nagtanong.</p>'
+    + '<p><b>3.</b> Ilalabas ang resulta. Bago ibunyag, hulaan kung sino ang bumoto sa iyo.</p>'
+    + '<p><b>4.</b> Kung nakakuha ka ng kahit kalahati ng boto, sa iyo ang black card. Unang makaabot sa target, panalo.</p>'
+    + '<p class="muted">Inom Tayo: kapag tama ang hula mo, iinom ang bumoto. Mali, ikaw ang iinom. Pwede ring tubig o juice.</p></div></details>';
+  return h;
+}
+function opt(m,t,s){ return '<button class="opt" data-act="mode" data-m="' + m + '" aria-pressed="' + (S.md === m) + '"><b>' + t + '</b><span>' + s + '</span></button>'; }
+function browseHtml(){
+  var d = DECKS[browseDeck];
+  var h = '<h2 style="font:800 26px var(--f-display);margin:0">Lahat ng tanong</h2><div class="tabs" role="tablist">';
+  DECKS.forEach(function(dk,i){ h += '<button class="deck" role="tab" data-act="tab" data-i="' + i + '" aria-pressed="' + (i === browseDeck) + '"><i style="background:' + dk.col + '"></i>' + esc(dk.name) + ' (' + dk.qs.length + ')</button>'; });
+  h += '</div><section class="panel"><p class="muted small">' + esc(d.sub) + '</p><ul class="qlist">';
+  d.qs.forEach(function(t){ h += '<li><i style="background:' + d.col + '"></i><span>' + esc(t) + '</span></li>'; });
+  return h + '</ul></section>';
+}
+function scoreHtml(){
+  if(S.md === 'x') return '';
+  return '<div class="score" aria-label="Score">' + S.od.map(function(n,i){ return '<div class="sc"><span class="dot" style="background:' + col(i).bg + '"></span>' + esc(n) + '<b>' + S.sc[i] + '</b></div>'; }).join('') + '</div>';
+}
+function qcard(small){
+  var q = Q[S.q] || Q[0], d = DECKS[q.d];
+  return '<div class="qcard' + (small ? ' small' : '') + '"><p class="qtext">' + esc(q.t) + '</p><div class="qfoot"><span>' + esc(d.name) + '</span><span>Boto Na, Bes!</span></div></div>';
+}
+function voteHtml(){
+  var n = S.od.length, vi = voter();
+  var h = '<div class="round"><b>Round ' + S.rd + '</b><span class="muted small">Nagtanong: ' + esc(S.od[S.ak]) + '</span></div>' + scoreHtml() + qcard(false);
+  if(S.step === 'pass'){
+    h += '<section class="panel passbox"><span class="swatch" style="background:' + col(vi).bg + '"></span><p class="label">Ipasa ang phone kay</p><div class="big">' + esc(S.od[vi]) + '</div>'
+      + '<p class="muted small">' + (S.vi + 1) + ' sa ' + n + '. Huwag sisilip ang iba.</p>'
+      + '<button class="btn block" data-act="ready">Ako si ' + esc(S.od[vi]) + '</button></section>';
+  } else {
+    h += '<p class="label">' + esc(S.od[vi]) + ', sino ang sagot? Pumili ng isa.</p><div class="tiles">';
+    S.od.forEach(function(nm,i){
+      if(i === vi && !S.sf) return;
+      h += '<button class="tile" data-act="pick" data-i="' + i + '" style="background:' + col(i).bg + ';color:' + col(i).fg + '" aria-pressed="' + (S.sel === i) + '">' + esc(nm) + '<small>Napili</small></button>';
+    });
+    h += '</div><div class="dock"><button class="btn block" data-act="confirm"' + (S.sel == null ? ' disabled' : '') + '>Kumpirmahin ang boto</button></div>';
+  }
+  return h;
+}
+function revealHtml(){
+  var key = S.rd + ':r'; var first = animKey !== key; animKey = key;
+  var ids = S.od.map(function(n,i){ return i; }).filter(function(i){ return S.rs[i] > 0; }).sort(function(a,b){ return S.rs[b] - S.rs[a]; });
+  var zero = S.od.map(function(n,i){ return i; }).filter(function(i){ return !S.rs[i]; });
+  var nm = function(list){ return list.map(function(w){ return esc(S.od[w]); }).join(' at '); };
+  var verdict;
+  if(!S.wn.length) verdict = 'Walang nakakuha ng kalahati ng boto. Walang black card.';
+  else if(S.md === 'm') verdict = nm(S.wn) + ' ang nanalo sa round. Puntos para sa mga bumoto sa kanya.';
+  else if(S.md === 'x') verdict = nm(S.wn) + ' ang sagot ng barkada!';
+  else verdict = nm(S.wn) + (S.wn.length > 1 ? ' ang magkahati sa black card.' : ' ang kumuha ng black card.');
+  var h = '<div class="round"><b>Round ' + S.rd + '</b><span class="muted small">' + S.tv + ' ang boto</span></div>' + qcard(true) + '<p class="verdict">' + verdict + '</p>';
+  var max = Math.max.apply(null, ids.map(function(i){ return S.rs[i]; }).concat([1]));
+  h += '<section class="panel res' + (first ? ' anim' : '') + '">';
+  ids.forEach(function(i){
+    var c = col(i), cnt = S.rs[i], win = S.wn.indexOf(i) > -1;
+    h += '<div class="rr"><div class="rh"><span class="dot" style="background:' + c.bg + '"></span><span class="n">' + esc(S.od[i]) + '</span>' + (win ? '<span class="badge">' + (S.md === 'c' ? 'Black card' : 'Panalo') + '</span>' : '') + '<span class="c">' + cnt + '</span></div>'
+      + '<div class="track"><div class="fill" data-w="' + Math.round(cnt / max * 100) + '" style="background:' + c.bg + ';width:' + (first ? 0 : Math.round(cnt / max * 100)) + '%"></div></div>';
+    if(S.sh){
+      h += '<div class="voters">' + S.votes.map(function(t,v){ return t === i ? '<span class="vch" style="background:' + col(v).bg + ';color:' + col(v).fg + '">' + esc(S.od[v]) + '</span>' : ''; }).join('') + '</div>';
+    }
+    h += '</div>';
+  });
+  if(zero.length) h += '<p class="muted small">Walang boto: ' + nm(zero) + '</p>';
+  h += '</section>';
+  if(!S.sh) h += '<p class="muted center">Hulaan na! Para sa bawat boto na natanggap mo, hulaan kung sino ang bumoto sa iyo.</p>';
+  h += scoreHtml() + '<div class="dock">' + (!S.sh ? '<button class="btn alt block" data-act="show">Ibunyag kung sino ang bumoto</button>' : '')
+    + '<button class="btn block" data-act="next">' + (S.fin ? 'Tingnan ang panalo' : 'Susunod na tanong') + '</button></div>';
+  return h;
+}
+function endHtml(){
+  var best = Math.max.apply(null, S.sc);
+  var wn = S.od.map(function(n,i){ return i; }).filter(function(i){ return S.sc[i] === best; });
+  var h = '<p class="label center">Panalo</p><div class="winner center">' + wn.map(function(i){ return esc(S.od[i]); }).join(' at ') + '</div>';
+  if(wn.length > 1) h += '<p class="muted center">Tabla. Ang dealer ang magpapasya.</p>';
+  var order = S.od.map(function(n,i){ return i; }).sort(function(a,b){ return S.sc[b] - S.sc[a]; });
+  h += '<section class="panel"><h2>Final score</h2>' + order.map(function(i){ return '<div class="rh"><span class="dot" style="background:' + col(i).bg + '"></span><span class="n">' + esc(S.od[i]) + '</span><span class="c">' + S.sc[i] + '</span></div>'; }).join('') + '</section>';
+  return h + '<div class="dock"><button class="btn block" data-act="again">Maglaro ulit (parehong players)</button><button class="btn alt block" data-act="reset">Palitan ang players</button></div>';
+}
+function render(){
+  top.innerHTML = topHtml();
+  var h;
+  if(view === 'browse') h = browseHtml();
+  else if(S.ph === 'setup') h = setupHtml();
+  else if(S.ph === 'vote') h = voteHtml();
+  else if(S.ph === 'reveal') h = revealHtml();
+  else h = endHtml();
+  app.innerHTML = h;
+  var fills = app.querySelectorAll('.anim .fill[data-w]');
+  if(fills.length) requestAnimationFrame(function(){ requestAnimationFrame(function(){ fills.forEach(function(f){ f.style.width = f.getAttribute('data-w') + '%'; }); }); });
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', function(e){
+  var t = e.target.closest('[data-act]'); if(!t || t.disabled) return;
+  var a = t.getAttribute('data-act'), i = +t.getAttribute('data-i');
+  if(a === 'add'){ if(S.names.length < 10){ S.names.push(''); save(); render(); var el = document.getElementById('n' + (S.names.length - 1)); if(el) el.focus(); } }
+  else if(a === 'del'){ S.names.splice(i,1); save(); render(); }
+  else if(a === 'deck'){ var k = S.dk.indexOf(i); if(k > -1) S.dk.splice(k,1); else S.dk.push(i); S.dk.sort(function(x,y){ return x - y; }); save(); render(); }
+  else if(a === 'mode'){ S.md = t.getAttribute('data-m'); save(); render(); }
+  else if(a === 'selfie'){ S.sf = S.sf ? 0 : 1; save(); render(); }
+  else if(a === 'start'){ startGame(); }
+  else if(a === 'browse'){ view = 'browse'; render(); window.scrollTo(0,0); }
+  else if(a === 'back'){ view = 'main'; render(); }
+  else if(a === 'tab'){ browseDeck = i; render(); }
+  else if(a === 'ready'){ S.step = 'pick'; S.sel = null; save(); render(); window.scrollTo(0,0); }
+  else if(a === 'pick'){ S.sel = i; render(); }
+  else if(a === 'confirm'){
+    if(S.sel == null) return;
+    S.votes[voter()] = S.sel; S.sel = null; S.vi++;
+    if(S.vi >= S.od.length) doReveal(); else S.step = 'pass';
+    save(); render(); window.scrollTo(0,0);
+  }
+  else if(a === 'show'){ S.sh = 1; save(); render(); }
+  else if(a === 'next'){ nextRound(); }
+  else if(a === 'again'){
+    S.sc = S.od.map(function(){ return 0; }); S.seed = (Math.random() * 1e9) | 0; S.ptr = 0; S.rd = 1; S.ak = 0; S.q = pickQ(); newRound(); save(); render();
+  }
+  else if(a === 'reset'){
+    if(armEnd || S.ph === 'end'){ armEnd = 0; S.names = S.od ? S.od.slice() : S.names; S.ph = 'setup'; save(); render(); }
+    else { armEnd = 1; render(); setTimeout(function(){ armEnd = 0; render(); }, 3500); }
+  }
+});
+document.addEventListener('input', function(e){
+  var m = /^n(\d+)$/.exec(e.target.id || '');
+  if(m){ S.names[+m[1]] = e.target.value; save(); }
+});
+render();
+})();
+</script>
+</body>
+</html>
