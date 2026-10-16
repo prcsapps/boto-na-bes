@@ -151,6 +151,29 @@ body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-a
 .status{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted)}
 .status i{width:9px;height:9px;border-radius:50%;background:var(--ok);display:block}
 .status.bad i{background:var(--accent)}
+.top{flex-wrap:wrap;row-gap:6px}
+.av{border-radius:50%;object-fit:cover;flex:none;display:inline-flex;align-items:center;justify-content:center;font-family:var(--f-display);font-weight:800;vertical-align:middle}
+.tile .av{box-shadow:0 0 0 2px rgba(255,255,255,.7)}
+.hint{background:var(--warn-bg);color:var(--warn);border-radius:14px;padding:10px 14px;font-size:14px;font-weight:600;text-align:center}
+.avrow{display:flex;align-items:center;gap:12px}
+.avrow .btn{min-height:44px;font-size:15px;padding:0 16px}
+.alert{border:2px solid var(--accent);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--surface)}
+.alert b{font:800 17px var(--f-display)}
+#pop{position:fixed;inset:0;z-index:20;background:rgba(15,10,25,.88);display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow:auto}
+#pop canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+.popcard{position:relative;text-align:center;color:#fff;display:flex;flex-direction:column;align-items:center;gap:16px;max-width:420px;width:100%}
+.popcard .kick{font:700 14px var(--f-body);letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.popwho{display:flex;flex-direction:column;align-items:center;gap:12px;opacity:0;transform:scale(.7)}
+.popwho.in{opacity:1;transform:scale(1);transition:opacity .35s,transform .5s cubic-bezier(.2,1.4,.4,1)}
+.popwho .names{display:flex;flex-wrap:wrap;gap:16px;justify-content:center}
+.popwho .one{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:0}
+.popwho .name{font:800 clamp(34px,11vw,58px)/.95 var(--f-display);text-transform:uppercase;overflow-wrap:anywhere}
+.popwho .av{box-shadow:0 0 0 6px #fff,0 10px 40px rgba(0,0,0,.5)}
+.popwho .cnt{font:700 18px var(--f-body)}
+.popq{font-size:14px;opacity:.8;max-width:34ch;margin:0}
+@media (prefers-reduced-motion: reduce){.popwho{opacity:1;transform:none}.popwho.in{transition:none}}
+.tile.none{grid-column:1/-1;min-height:64px;background:transparent;color:var(--ink);border:2px dashed var(--muted)}
+.tile.none small{text-transform:none;letter-spacing:0;font-size:13px}
 </style>
 </head>
 <body>
@@ -172,7 +195,7 @@ body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-a
 (function(){
 'use strict';
 var PEER_OPTS = {};
-var DECKS = [{"name": "Main Deck", "sub": "Barkada, buhay at kilig", "col": "#E53935", "qs": ["Sino ang laging \"Otw na\" pero hindi pa naliligo?", "Sino ang may 12,000 unread messages at 47 group chats na naka-mute?", "Sino ang laging \"Last na 'to, uwi na ako\" pero mauuna pang um-order ng isa pang round?", "Sino ang nag-seen lang sa group chat pero buhay na buhay sa TikTok?", "Sino ang pinaka-mabilis mag-\"Sorry, di ako makakapunta, may lagnat ako\" pero nasa mall pala?", "Sino ang ililibre ng lahat dahil \"wala akong pera\" pero may bagong sapatos?", "Sino ang may screenshot ng chat ninyo at handang i-expose kapag nagka-away?", "Sino ang \"5 minutes lang\" daw pero 2 oras kung mag-ayos?", "Sino ang may pinakamaraming utang sa SPayLater at GLoan?", "Sino ang gumawa ng group project nang mag-isa habang 4 na iba ay nag-\"Thank you po\"?", "Sino ang pinaka-malamang mag-resign dahil sa toxic na boss?", "Sino ang gagastos ng buong sahod sa Shopee 11.11 at mangangailangan ng pambili ng ulam sa 12.12?", "Sino ang pinaka-malamang maging boss ng barkada in 10 years?", "Sino ang nag-aral lang noong gabi bago ang exam at mataas pa rin ang nakuha?", "Sino ang may pinakamaraming finsta o dummy account?", "Sino ang unang mag-viral dahil sa isang nakakahiyang video?", "Sino ang nagta-type ng \"HAHAHAHA\" pero seryoso lang ang mukha?", "Sino ang nag-stalk sa ex ng crush niya at alam na ang buong kasaysayan nito?", "Sino ang magiging influencer at maglalagay ng \"link in bio\" sa lahat ng bagay?", "Sino ang may pinakamaraming \"Seen\" na hindi nire-replyan?", "Sino ang laging pinapagalitan ni Mama kahit 25 years old na?", "Sino ang magdadala ng sariling tupperware sa handaan \"para may baon\"?", "Sino ang laging sumasakay ng Grab kahit 5 minutes lang naman ang lakad?", "Sino ang magsasabing \"Ako na lang kukuha\" pero dalawang plato ang iuuwi?", "Sino ang pinaka-natatakot sa EDSA traffic pero araw-araw pa ring nandoon?", "Sino ang mauunang umiyak sa isang teleserye o K-drama?", "Sino ang may \"situationship\" na mahigit isang taon na?", "Sino ang laging \"kaibigan lang\" sa nililigawan niya?", "Sino ang hindi pa rin nakaka-move on sa ex niya?", "Sino ang pinaka-malamang umiyak sa kasal ng barkada?", "Sino ang nagsasabing \"Diet na ako bukas\" araw-araw?", "Sino ang laging nakakalimot ng password sa sarili niyang account?", "Sino ang may phone na 2% na lang pero ayaw pa ring mag-charge?", "Sino ang nag-text ng \"Gising ka pa?\" sa maling tao?", "Sino ang nag-mute ng group chat pero siya pa ang unang nagtatanong ng \"Ano nangyari?\"", "Sino ang may Notes app na puno ng drafts na hindi na kailanman ipo-post?"]}, {"name": "Spicy Deck", "sub": "Para sa matatapang", "col": "#D81B60", "qs": ["Sino ang may pinakamalaking red flag pero ayaw aminin?", "Sino ang unang ikakasal sa taong hindi pa nila nakikilala?", "Sino ang pinaka-malamang mag-\"Wala akong sinabi\" pero siya naman ang nagsimula ng chismis?", "Sino ang may secret crush sa isa sa inyo dito ngayon?", "Sino ang pinaka-hirap magsabi ng \"I love you\"?", "Sino ang nag-ghost ng taong halos jowa na?", "Sino ang may pinaka-nakakahiyang search history?", "Sino ang pinaka-malamang ma-late sa sarili niyang kasal?", "Sino ang may Close Friends story na ayaw ipakita sa lahat?", "Sino ang pinaka-malamang makipagbalikan sa ex pagkatapos ng 3 inuman?", "Sino ang nag-text ng \"Wrong send po\" pero sinadya talaga?", "Sino ang pinaka-malamang sumigaw ng \"Hindi ako lasing!\" habang lasing?"]}, {"name": "Bahala Ka Na", "sub": "Mas malikhain at mas chaotic", "col": "#FB8C00", "qs": ["Sino ang pinaka-malamang mag-viral dahil sa sobrang emosyonal na videoke performance?", "Sino ang hindi kayang mabuhay nang walang milk tea?", "Sino ang may pinakamaraming utang sa Tita nila?", "Sino ang pinaka-malamang umiyak kapag may nag-surprise sa birthday niya?", "Sino ang unang susuko kapag hiking ang usapan?", "Sino ang hindi pa rin nakaka-move on mula sa online class days?", "Sino ang modern-day tsismosa ng barangay?", "Sino ang pinaka-malamang ma-late dahil nakatulog ulit pagkatapos patayin ang alarm?", "Sino ang may pinakamasamang ugali pagdating sa hatian ng bill sa restaurant?", "Sino ang agad nagkaka-crush sa kahit sinong marunong mag-gitara?", "Sino ang hindi marunong magsaing kahit 25 na?", "Sino ang magiging pinaka-successful kapag nagtayo ng online selling business?", "Sino ang pinaka-malamang magpa-tattoo ng pangalan ng jowa?", "Sino ang laging may dalang powerbank, charger, at extension cord?", "Sino ang hindi makakatulog kapag walang Wi-Fi?", "Sino ang pinaka-malamang manalo sa Pinoy Henyo?", "Sino ang mauunang mag-asawa sa barkada?", "Sino ang mauunang mag-abroad at magpapadala ng balikbayan box?", "Sino ang magiging pinaka-strict na magulang?", "Sino ang magiging paboritong tito o tita ng lahat ng pamangkin?", "Sino ang pinaka-malamang maging kapitan ng barangay?", "Sino ang magkakaroon ng pinakamaraming alagang pusa pagdating ng 40?", "Sino ang pinaka-malamang makalimot ng PIN ng sarili niyang ATM?", "Sino ang magbebenta ng lahat ng gamit at lilipat sa probinsya para mag-farm?"]}, {"name": "Pop Culture", "sub": "K-pop, TikTok at teleserye", "col": "#8E24AA", "qs": ["Sino ang may pinakamaraming nabiling merch ng K-pop group?", "Sino ang nag-queue ng 8 oras para sa concert tickets pero wala pa ring nakuha?", "Sino ang nanood ng buong season ng K-drama sa isang upuan?", "Sino ang laging may hot take sa X na pinagsisisihan kinabukasan?", "Sino ang gumagawa ng dance challenge sa TikTok kahit walang nanonood?", "Sino ang may Spotify Wrapped na nakakahiyang ipakita?", "Sino ang pinaka-malamang maging housemate sa PBB?", "Sino ang nag-cancel ng Netflix pero gumagamit pa rin ng account ng kaibigan?", "Sino ang may pinakamagandang boses sa videoke?", "Sino ang nagpa-aesthetic ng buong kwarto dahil sa Pinterest pero magulo pa rin ang kama?", "Sino ang unang bumili ng bagong iPhone kahit may utang pa sa luma?", "Sino ang laging may \"pasabuy\" na order sa kahit anong biyahe?"]}, {"name": "Office at School", "sub": "Para sa estudyante at empleyado", "col": "#1E88E5", "qs": ["Sino ang \"present po\" pero tulog sa Zoom class?", "Sino ang nag-submit ng requirements 1 minute bago ang deadline?", "Sino ang laging nagtatanong ng \"May assignment ba?\" pagpasok pa lang sa klase?", "Sino ang pinaka-malamang mag-cram ng thesis sa huling gabi?", "Sino ang may pinaka-aesthetic na planner pero walang laman?", "Sino ang nagse-send ng \"Per my last email\" sa tonong galit?", "Sino ang magiging pinaka-strict na professor?", "Sino ang magsasalita sa meeting nang naka-mute at hindi alam?", "Sino ang mauunang ma-promote kahit paborito ang matulog sa office?", "Sino ang nag-\"Good morning po\" sa group chat ng opisina na walang sumasagot?", "Sino ang nagkunwaring may bad connection para makaiwas sa recitation?", "Sino ang magiging CEO ng startup na hindi pa alam kung ano ang ibebenta?"]}, {"name": "Pamilya at Pinoy Life", "sub": "Handaan, jeep at Lola", "col": "#43A047", "qs": ["Sino ang uuwi ng probinsya na may dalang tatlong sakong pasalubong?", "Sino ang laging pinupuna ni Lola na \"pumayat ka\" o \"tumaba ka\"?", "Sino ang naka-tsinelas kahit saan pumunta?", "Sino ang nag-aaway sa family group chat dahil sa politika?", "Sino ang nag-iipon ng plastic bag \"baka kailanganin\"?", "Sino ang pinaka-malamang humingi pa rin ng pamasko kahit matanda na?", "Sino ang pinakamalakas ang boses sa videoke tuwing handaan?", "Sino ang laging nalalampasan ang babaan sa jeep?", "Sino ang laging tinatanong ng \"Kailan ka mag-aasawa?\" tuwing reunion?", "Sino ang gagawing hapunan ang tirang ulam kahapon at sasabihing \"mas masarap na\"?", "Sino ang pinaka-malamang maging OFW ng barkada?", "Sino ang magbibigay ng \"noong kabataan ko\" speech pagdating ng 40?"]}, {"name": "Pagkain at Gala", "sub": "Foodtrip at out-of-town", "col": "#00897B", "qs": ["Sino ang hindi kayang tanggihan ang unli rice?", "Sino ang may pinakamaraming food delivery orders ngayong linggo?", "Sino ang laging nagsha-share ng pagkain pero kinukuha ang pinakamalaki?", "Sino ang magsasabing \"Di ako gutom\" tapos uubusin ang fries mo?", "Sino ang pinakamahina sa anghang pero laging nagpapa-extra spicy?", "Sino ang may pinakamaraming food pics pero hindi nagbabayad ng share?", "Sino ang sasama sa gala pero uuwi pagkalipas ng 30 minuto?", "Sino ang magpaplano ng out-of-town trip na hindi matutuloy kailanman?", "Sino ang magbo-book ng seat sale flight pero hindi makakasakay?", "Sino ang magpapa-picture muna sa pagkain bago kumain kahit malamig na?", "Sino ang magdadala ng sariling sili at toyo sa restaurant?", "Sino ang laging \"Libre mo ako, babawi ako\" pero hindi na bumabawi?"]}, {"name": "Throwback", "sub": "Kabataan at lockdown days", "col": "#6D4C41", "qs": ["Sino ang ginawang personalidad ang pag-rank up sa Mobile Legends?", "Sino ang nagpasa ng chain message sa Messenger at natakot kapag hindi nag-forward?", "Sino ang may pinaka-nakakahiyang lumang Facebook post?", "Sino ang nakipag-patintero hanggang gabi at pinagalitan?", "Sino ang tumakbo sa kalsada habang naglalaro ng Pokemon Go?", "Sino ang may koleksyon ng stickers o tazos noong bata?", "Sino ang nanonood pa rin ng cartoons tuwing Sabado ng umaga?", "Sino ang nagpa-load ng Unli Text para lang makausap ang crush?", "Sino ang may yearbook photo na ayaw ipakita kahit kanino?", "Sino ang tatakbo agad pagnarinig ang tunog ng sorbetero?", "Sino ang nag-online class habang nakahiga sa kama?", "Sino ang may pinaka-nakakahiyang TikTok dance noong lockdown?"]}];
+var DECKS = [{"name": "Main Deck", "sub": "Barkada, buhay at kilig", "col": "#E53935", "qs": ["Sino ang laging \"Otw na\" pero hindi pa naliligo?", "Sino ang may 12,000 unread messages at 47 group chats na naka-mute?", "Sino ang laging \"Last na 'to, uwi na ako\" pero mauuna pang um-order ng isa pang round?", "Sino ang nag-seen lang sa group chat pero buhay na buhay sa TikTok?", "Sino ang pinaka-mabilis mag-\"Sorry, di ako makakapunta, may lagnat ako\" pero nasa mall pala?", "Sino ang ililibre ng lahat dahil \"wala akong pera\" pero may bagong sapatos?", "Sino ang may screenshot ng chat ninyo at handang i-expose kapag nagka-away?", "Sino ang \"5 minutes lang\" daw pero 2 oras kung mag-ayos?", "Sino ang may pinakamaraming utang sa SPayLater at GLoan?", "Sino ang gumawa ng group project nang mag-isa habang 4 na iba ay nag-\"Thank you po\"?", "Sino ang pinaka-malamang mag-resign dahil sa toxic na boss?", "Sino ang gagastos ng buong sahod sa Shopee 11.11 at mangangailangan ng pambili ng ulam sa 12.12?", "Sino ang pinaka-malamang maging boss ng barkada in 10 years?", "Sino ang nag-aral lang noong gabi bago ang exam at mataas pa rin ang nakuha?", "Sino ang may pinakamaraming finsta o dummy account?", "Sino ang unang mag-viral dahil sa isang nakakahiyang video?", "Sino ang nagta-type ng \"HAHAHAHA\" pero seryoso lang ang mukha?", "Sino ang nag-stalk sa ex ng crush niya at alam na ang buong kasaysayan nito?", "Sino ang magiging influencer at maglalagay ng \"link in bio\" sa lahat ng bagay?", "Sino ang may pinakamaraming \"Seen\" na hindi nire-replyan?", "Sino ang laging pinapagalitan ni Mama kahit 25 years old na?", "Sino ang magdadala ng sariling tupperware sa handaan \"para may baon\"?", "Sino ang laging sumasakay ng Grab kahit 5 minutes lang naman ang lakad?", "Sino ang magsasabing \"Ako na lang kukuha\" pero dalawang plato ang iuuwi?", "Sino ang pinaka-natatakot sa EDSA traffic pero araw-araw pa ring nandoon?", "Sino ang mauunang umiyak sa isang teleserye o K-drama?", "Sino ang may \"situationship\" na mahigit isang taon na?", "Sino ang laging \"kaibigan lang\" sa nililigawan niya?", "Sino ang hindi pa rin nakaka-move on sa ex niya?", "Sino ang pinaka-malamang umiyak sa kasal ng barkada?", "Sino ang nagsasabing \"Diet na ako bukas\" araw-araw?", "Sino ang laging nakakalimot ng password sa sarili niyang account?", "Sino ang may phone na 2% na lang pero ayaw pa ring mag-charge?", "Sino ang nag-text ng \"Gising ka pa?\" sa maling tao?", "Sino ang nag-mute ng group chat pero siya pa ang unang nagtatanong ng \"Ano nangyari?\"", "Sino ang may Notes app na puno ng drafts na hindi na kailanman ipo-post?"]}, {"name": "Spicy Deck", "sub": "Para sa matatapang", "col": "#D81B60", "qs": ["Sino ang may pinakamalaking red flag pero ayaw aminin?", "Sino ang unang ikakasal sa taong hindi pa nila nakikilala?", "Sino ang pinaka-malamang mag-\"Wala akong sinabi\" pero siya naman ang nagsimula ng chismis?", "Sino ang may secret crush sa isa sa inyo dito ngayon?", "Sino ang pinaka-hirap magsabi ng \"I love you\"?", "Sino ang nag-ghost ng taong halos jowa na?", "Sino ang may pinaka-nakakahiyang search history?", "Sino ang pinaka-malamang ma-late sa sarili niyang kasal?", "Sino ang may Close Friends story na ayaw ipakita sa lahat?", "Sino ang pinaka-malamang makipagbalikan sa ex pagkatapos ng 3 inuman?", "Sino ang nag-text ng \"Wrong send po\" pero sinadya talaga?", "Sino ang pinaka-malamang sumigaw ng \"Hindi ako lasing!\" habang lasing?"]}, {"name": "Bahala Ka Na", "sub": "Mas malikhain at mas chaotic", "col": "#FB8C00", "qs": ["Sino ang pinaka-malamang mag-viral dahil sa sobrang emosyonal na videoke performance?", "Sino ang hindi kayang mabuhay nang walang milk tea?", "Sino ang may pinakamaraming utang sa Tita nila?", "Sino ang pinaka-malamang umiyak kapag may nag-surprise sa birthday niya?", "Sino ang unang susuko kapag hiking ang usapan?", "Sino ang hindi pa rin nakaka-move on mula sa online class days?", "Sino ang modern-day tsismosa ng barangay?", "Sino ang pinaka-malamang ma-late dahil nakatulog ulit pagkatapos patayin ang alarm?", "Sino ang may pinakamasamang ugali pagdating sa hatian ng bill sa restaurant?", "Sino ang agad nagkaka-crush sa kahit sinong marunong mag-gitara?", "Sino ang hindi marunong magsaing kahit 25 na?", "Sino ang magiging pinaka-successful kapag nagtayo ng online selling business?", "Sino ang pinaka-malamang magpa-tattoo ng pangalan ng jowa?", "Sino ang laging may dalang powerbank, charger, at extension cord?", "Sino ang hindi makakatulog kapag walang Wi-Fi?", "Sino ang pinaka-malamang manalo sa Pinoy Henyo?", "Sino ang mauunang mag-asawa sa barkada?", "Sino ang mauunang mag-abroad at magpapadala ng balikbayan box?", "Sino ang magiging pinaka-strict na magulang?", "Sino ang magiging paboritong tito o tita ng lahat ng pamangkin?", "Sino ang pinaka-malamang maging kapitan ng barangay?", "Sino ang magkakaroon ng pinakamaraming alagang pusa pagdating ng 40?", "Sino ang pinaka-malamang makalimot ng PIN ng sarili niyang ATM?", "Sino ang magbebenta ng lahat ng gamit at lilipat sa probinsya para mag-farm?"]}, {"name": "Pop Culture", "sub": "K-pop, TikTok at teleserye", "col": "#8E24AA", "qs": ["Sino ang may pinakamaraming nabiling merch ng K-pop group?", "Sino ang nag-queue ng 8 oras para sa concert tickets pero wala pa ring nakuha?", "Sino ang nanood ng buong season ng K-drama sa isang upuan?", "Sino ang laging may hot take sa X na pinagsisisihan kinabukasan?", "Sino ang gumagawa ng dance challenge sa TikTok kahit walang nanonood?", "Sino ang may Spotify Wrapped na nakakahiyang ipakita?", "Sino ang pinaka-malamang maging housemate sa PBB?", "Sino ang nag-cancel ng Netflix pero gumagamit pa rin ng account ng kaibigan?", "Sino ang may pinakamagandang boses sa videoke?", "Sino ang nagpa-aesthetic ng buong kwarto dahil sa Pinterest pero magulo pa rin ang kama?", "Sino ang unang bumili ng bagong iPhone kahit may utang pa sa luma?", "Sino ang laging may \"pasabuy\" na order sa kahit anong biyahe?"]}, {"name": "Office at School", "sub": "Para sa estudyante at empleyado", "col": "#1E88E5", "qs": ["Sino ang \"present po\" pero tulog sa Zoom class?", "Sino ang nag-submit ng requirements 1 minute bago ang deadline?", "Sino ang laging nagtatanong ng \"May assignment ba?\" pagpasok pa lang sa klase?", "Sino ang pinaka-malamang mag-cram ng thesis sa huling gabi?", "Sino ang may pinaka-aesthetic na planner pero walang laman?", "Sino ang nagse-send ng \"Per my last email\" sa tonong galit?", "Sino ang magiging pinaka-strict na professor?", "Sino ang magsasalita sa meeting nang naka-mute at hindi alam?", "Sino ang mauunang ma-promote kahit paborito ang matulog sa office?", "Sino ang nag-\"Good morning po\" sa group chat ng opisina na walang sumasagot?", "Sino ang nagkunwaring may bad connection para makaiwas sa recitation?", "Sino ang magiging CEO ng startup na hindi pa alam kung ano ang ibebenta?"]}, {"name": "Pamilya at Pinoy Life", "sub": "Handaan, jeep at Lola", "col": "#43A047", "qs": ["Sino ang uuwi ng probinsya na may dalang tatlong sakong pasalubong?", "Sino ang laging pinupuna ni Lola na \"pumayat ka\" o \"tumaba ka\"?", "Sino ang naka-tsinelas kahit saan pumunta?", "Sino ang nag-aaway sa family group chat dahil sa politika?", "Sino ang nag-iipon ng plastic bag \"baka kailanganin\"?", "Sino ang pinaka-malamang humingi pa rin ng pamasko kahit matanda na?", "Sino ang pinakamalakas ang boses sa videoke tuwing handaan?", "Sino ang laging nalalampasan ang babaan sa jeep?", "Sino ang laging tinatanong ng \"Kailan ka mag-aasawa?\" tuwing reunion?", "Sino ang gagawing hapunan ang tirang ulam kahapon at sasabihing \"mas masarap na\"?", "Sino ang pinaka-malamang maging OFW ng barkada?", "Sino ang magbibigay ng \"noong kabataan ko\" speech pagdating ng 40?"]}, {"name": "Pagkain at Gala", "sub": "Foodtrip at out-of-town", "col": "#00897B", "qs": ["Sino ang hindi kayang tanggihan ang unli rice?", "Sino ang may pinakamaraming food delivery orders ngayong linggo?", "Sino ang laging nagsha-share ng pagkain pero kinukuha ang pinakamalaki?", "Sino ang magsasabing \"Di ako gutom\" tapos uubusin ang fries mo?", "Sino ang pinakamahina sa anghang pero laging nagpapa-extra spicy?", "Sino ang may pinakamaraming food pics pero hindi nagbabayad ng share?", "Sino ang sasama sa gala pero uuwi pagkalipas ng 30 minuto?", "Sino ang magpaplano ng out-of-town trip na hindi matutuloy kailanman?", "Sino ang magbo-book ng seat sale flight pero hindi makakasakay?", "Sino ang magpapa-picture muna sa pagkain bago kumain kahit malamig na?", "Sino ang magdadala ng sariling sili at toyo sa restaurant?", "Sino ang laging \"Libre mo ako, babawi ako\" pero hindi na bumabawi?"]}, {"name": "Throwback", "sub": "Kabataan at lockdown days", "col": "#6D4C41", "qs": ["Sino ang ginawang personalidad ang pag-rank up sa Mobile Legends?", "Sino ang nagpasa ng chain message sa Messenger at natakot kapag hindi nag-forward?", "Sino ang may pinaka-nakakahiyang lumang Facebook post?", "Sino ang nakipag-patintero hanggang gabi at pinagalitan?", "Sino ang tumakbo sa kalsada habang naglalaro ng Pokemon Go?", "Sino ang may koleksyon ng stickers o tazos noong bata?", "Sino ang nanonood pa rin ng cartoons tuwing Sabado ng umaga?", "Sino ang nagpa-load ng Unli Text para lang makausap ang crush?", "Sino ang may yearbook photo na ayaw ipakita kahit kanino?", "Sino ang tatakbo agad pagnarinig ang tunog ng sorbetero?", "Sino ang nag-online class habang nakahiga sa kama?", "Sino ang may pinaka-nakakahiyang TikTok dance noong lockdown?"]}, {"name": "Badminton", "sub": "Smash, talo at reklamo sa court", "col": "#0097A7", "qs": ["Sino ang laging nang-i-smash sa kalaro kahit friendly game lang?", "Sino ang pinaka-competitive kahit \"chill lang\" ang usapan?", "Sino ang agad nababadtrip kapag natatalo?", "Sino ang laging sumisigaw ng \"Out 'yan!\" kahit in naman?", "Sino ang may pinakamaraming raketa pero pang-display lang ang iba?", "Sino ang laging nagsasabing \"Sorry!\" pagkatapos ng smash pero hindi naman sorry?", "Sino ang na-late dahil inayos pa ang grip at sapatos?", "Sino ang pinaka-maingay sa court pero kakaunti ang puntos?", "Sino ang laging nakakalimot magdala ng shuttlecock?", "Sino ang nag-warm up nang 30 minuto pero pagod na bago magsimula ang laro?", "Sino ang laging nakatayo lang sa gitna at halos hindi gumagalaw?", "Sino ang laging may dahilan kapag natatalo, gaya ng \"Masakit ang tuhod ko\"?", "Sino ang pinakamalakas tumawa kapag nagkamali ang kalaro?", "Sino ang ginagawang buong personalidad ang pagiging badminton player?", "Sino ang laging nag-aaya maglaro pero siya ang unang umuuwi?", "Sino ang laging umiiwas sa pagpulot ng shuttle sa sahig?", "Sino ang tatahimik at magseseryoso pagdating ng match point?", "Sino ang magpapa-tryout sa Olympics pagkatapos manalo ng isang game?", "Sino ang nagpa-picture sa court pero hindi naman naglaro?", "Sino ang may pinakamahabang kwento tungkol sa \"dating varsity ako\"?", "Sino ang sisisihin ang electric fan kapag lumihis ang shuttle?", "Sino ang laging may pang-milk tea pagkatapos maglaro pero walang pambayad sa court?"]}];
 var COLORS = [
   {bg:'#E53935',fg:'#FFFFFF'},{bg:'#FB8C00',fg:'#1B1200'},{bg:'#FDD835',fg:'#1B1700'},
   {bg:'#43A047',fg:'#FFFFFF'},{bg:'#00897B',fg:'#FFFFFF'},{bg:'#1E88E5',fg:'#FFFFFF'},
@@ -183,6 +206,7 @@ var Q = [];
 DECKS.forEach(function(d,di){ d.qs.forEach(function(t){ Q.push({t:t,d:di}); }); });
 var ALPHA = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 var PREFIX = 'bnbes-';
+var NONE = '_none';
 var app = document.getElementById('app'), top = document.getElementById('top'), toastEl = document.getElementById('toast');
 
 /* ---------- helpers ---------- */
@@ -212,17 +236,22 @@ var revealTimer = null, hostTries = 0, armLeave = 0;
 // client side
 var S = null, conn = null, status = 'idle', joinedOnce = false, lastHost = 0, retryTimer = null, myVote = null;
 var animKey = '';
+var AV = {}, myAv = lsGet('bnb_av') || '', soundOn = lsGet('bnb_snd') !== '0', prevKey = null, prevOn = {}, prevInit = false, popCleanup = null;
+var AVRE = /^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/;
+if(AVRE.test(myAv)) AV[myPid] = myAv; else myAv = '';
 
-function pile(g){
-  var idx = []; Q.forEach(function(q,i){ if(g.dk.indexOf(q.d) > -1) idx.push(i); });
+function buildQueue(g){
+  var used = g.used || [], idx = [];
+  Q.forEach(function(q,i){ if(g.dk.indexOf(q.d) > -1 && used.indexOf(i) < 0) idx.push(i); });
   var r = mulberry(g.seed);
   for(var i = idx.length - 1; i > 0; i--){ var j = Math.floor(r() * (i + 1)); var t = idx[i]; idx[i] = idx[j]; idx[j] = t; }
   return idx;
 }
-function pickQ(g){ var p = pile(g); return p.length ? p[g.ptr % p.length] : 0; }
-function cur(){ return role === 'host' ? {g:G, pl:players} : S ? {g:S.g, pl:S.pl} : null; }
+function remaining(g){ var n = 0, used = g.used || []; Q.forEach(function(q,i){ if(g.dk.indexOf(q.d) > -1 && used.indexOf(i) < 0) n++; }); return n; }
+function roundLabel(g){ return 'Round ' + g.rd + (g.pn && g.ptr + 1 >= g.pn ? ' \u00b7 Huling tanong' : ''); }
+function cur(){ return role === 'host' ? {g:pubState().g, pl:players} : S ? {g:S.g, pl:S.pl} : null; }
 function plOf(pl,pid){ for(var i=0;i<pl.length;i++) if(pl[i].pid === pid) return pl[i]; return null; }
-function nameOf(pid, c){ var p = plOf(c.pl, pid); if(p && p.name) return p.name; if(c.g && c.g.nm && c.g.nm[pid]) return c.g.nm[pid]; return 'Player'; }
+function nameOf(pid, c){ if(pid === NONE) return 'Wala'; var p = plOf(c.pl, pid); if(p && p.name) return p.name; if(c.g && c.g.nm && c.g.nm[pid]) return c.g.nm[pid]; return 'Player'; }
 function colorOf(pid, c){
   if(c.g && c.g.od){ var i = c.g.od.indexOf(pid); if(i > -1) return COLORS[i % COLORS.length]; }
   var j = -1; c.pl.forEach(function(p,k){ if(p.pid === pid) j = k; });
@@ -230,9 +259,10 @@ function colorOf(pid, c){
 }
 
 /* ================= HOST ================= */
-function newGame(){ return {ph:'lobby', dk:DECKS.map(function(d,i){ return i; }), md:'c', sf:0, tg:6, voted:{}, sh:0, fin:0}; }
+function newGame(){ return {ph:'lobby', dk:DECKS.map(function(d,i){ return i; }), md:'c', sf:0, tg:6, voted:{}, sh:0, fin:0, used:[], pq:[], sk:0}; }
 function pubState(){
   var g = Object.assign({}, G); if(!G.sh) delete g.vt;
+  g.pn = G.pq ? G.pq.length : 0; g.rm = remaining(G); g.ua = (G.used || []).length; delete g.pq; delete g.used;
   return {g:g, pl:players.map(function(p){ return {pid:p.pid, name:p.name, on:p.on}; })};
 }
 function saveHost(){
@@ -242,8 +272,24 @@ function saveHost(){
 function broadcast(){
   var s = {t:'s', s:pubState()};
   Object.keys(conns).forEach(function(k){ var c = conns[k]; if(c && c.open){ try{ c.send(s); }catch(e){} } });
-  saveHost(); hostLogic(); render();
+  notify(players); saveHost(); render();
 }
+function notify(pl){
+  var now = {};
+  pl.forEach(function(p){
+    now[p.pid] = p.on; if(p.pid === myPid || !prevInit) return;
+    if(!(p.pid in prevOn)) toast(p.name + ' ay sumali sa room');
+    else if(prevOn[p.pid] && !p.on) toast(p.name + ' ay umalis sa room');
+    else if(!prevOn[p.pid] && p.on) toast(p.name + ' ay bumalik');
+  });
+  prevOn = now; prevInit = true;
+}
+function markOff(p){
+  p.on = false;
+  if(G && (G.ph === 'vote' || G.ph === 'reveal') && G.od && G.od.indexOf(p.pid) > -1 && p.pid !== myPid) G.al = {pid:p.pid, mode:'ask'};
+}
+function sendAvAll(pid){ Object.keys(conns).forEach(function(k){ var c = conns[k]; if(c && c.open){ try{ c.send({t:'a', pid:pid, a:AV[pid]}); }catch(e){} } }); }
+function setAv(pid, a){ if(typeof a !== 'string' || a.length > 60000 || !AVRE.test(a)) return; AV[pid] = a; sendAvAll(pid); render(); }
 function findPl(pid){ return plOf(players, pid); }
 function uniqueName(name, pid){
   var base = name, n = 1;
@@ -261,10 +307,11 @@ function onHello(c, m){
     if(players.length >= 10){ try{ c.send({t:'err', m:'Puno na ang room (hanggang 10 players).'}); }catch(e){} return; }
     p = {pid:genPid(), name:uniqueName(name, null), on:true}; players.push(p);
   } else if(G.ph === 'lobby'){ p.name = uniqueName(name, p.pid); }
-  p.on = true;
+  p.on = true; if(G.al && G.al.pid === p.pid) delete G.al;
   var old = conns[p.pid]; if(old && old !== c){ try{ old.close(); }catch(e){} }
   conns[p.pid] = c; c._pid = p.pid; seen[p.pid] = Date.now();
   try{ c.send({t:'w', pid:p.pid}); }catch(e){}
+  Object.keys(AV).forEach(function(k){ try{ c.send({t:'a', pid:k, a:AV[k]}); }catch(e){} });
   broadcast();
 }
 function hostOnConn(c){
@@ -274,12 +321,13 @@ function hostOnConn(c){
     var pid = c._pid; if(!pid) return;
     seen[pid] = Date.now();
     if(m.t === 'vote') voteFor(pid, m.rd, m.v);
+    else if(m.t === 'av') setAv(pid, m.a);
     else if(m.t === 'p'){ try{ c.send({t:'p'}); }catch(e){} }
   });
-  var gone = function(){ var pid = c._pid; if(pid && conns[pid] === c){ delete conns[pid]; var p = findPl(pid); if(p) p.on = false; broadcast(); } };
+  var gone = function(){ var pid = c._pid; if(pid && conns[pid] === c){ delete conns[pid]; var p = findPl(pid); if(p) markOff(p); broadcast(); } };
   c.on('close', gone); c.on('error', gone);
 }
-function validVote(pid, v){ return G.od.indexOf(v) > -1 && (G.sf || v !== pid); }
+function validVote(pid, v){ return v === NONE || (G.od.indexOf(v) > -1 && (G.sf || v !== pid)); }
 function voteFor(pid, rd, v){
   if(!G || G.ph !== 'vote' || rd !== G.rd || G.od.indexOf(pid) < 0 || !validVote(pid, v)) return;
   votes[pid] = v; G.voted[pid] = 1; broadcast();
@@ -288,30 +336,32 @@ function allVoted(){
   var on = G.od.filter(function(pid){ var p = findPl(pid); return p && p.on; });
   return on.length > 0 && on.every(function(pid){ return votes[pid] != null; });
 }
-function hostLogic(){
-  if(role !== 'host' || !G || G.ph !== 'vote'){ clearTimeout(revealTimer); revealTimer = null; return; }
-  if(allVoted()){ if(!revealTimer) revealTimer = setTimeout(function(){ revealTimer = null; if(G && G.ph === 'vote' && allVoted()) doReveal(); }, 900); }
-  else { clearTimeout(revealTimer); revealTimer = null; }
-}
+function hostLogic(){}
 function startGame(){
   var ids = players.filter(function(p){ return p.on; }).map(function(p){ return p.pid; });
   if(ids.length < 3){ toast('Kailangan ng 3 o higit pang players'); return; }
   if(!G.dk.length){ toast('Pumili ng kahit isang deck'); return; }
+  var miss = players.filter(function(p){ return p.on && !AV[p.pid]; });
+  if(miss.length && !G.sk){ toast('Kulang pa ang larawan ng ilang player'); return; }
+  G.seed = (Math.random() * 1e9) | 0;
+  var pq = buildQueue(G);
+  if(!pq.length){ toast('Naubos na ang mga tanong sa napiling deck. Pumili ng iba o i-reset ang nagamit na tanong.'); return; }
   var r = mulberry(Date.now() & 0xffffff);
   for(var i = ids.length - 1; i > 0; i--){ var j = Math.floor(r() * (i + 1)); var t = ids[i]; ids[i] = ids[j]; ids[j] = t; }
   G.od = ids.slice(0,10); G.nm = {}; G.sc = {};
   G.od.forEach(function(pid){ G.nm[pid] = findPl(pid).name; G.sc[pid] = 0; });
   G.tg = G.md === 'm' ? 10 : 6;
-  G.seed = (Math.random() * 1e9) | 0; G.ptr = 0; G.rd = 1; G.ak = G.od[0]; G.q = pickQ(G);
+  G.ptr = 0; G.rd = 1; G.ak = G.od[0]; G.pq = pq; G.q = pq[0]; G.used.push(G.q); delete G.ex; delete G.al;
   resetRound(); broadcast();
 }
-function resetRound(){ G.ph = 'vote'; G.voted = {}; votes = {}; G.sh = 0; G.fin = 0; delete G.rs; delete G.vt; delete G.wn; delete G.tv; G.ph = 'vote'; }
+function resetRound(){ G.ph = 'vote'; G.voted = {}; votes = {}; G.sh = 0; G.fin = 0; delete G.rs; delete G.vt; delete G.wn; delete G.tv; delete G.nw; G.ph = 'vote'; }
 function doReveal(){
   if(!G || G.ph !== 'vote') return;
   var rs = {}, vt = {}, tv = 0;
   G.od.forEach(function(pid){ var v = votes[pid]; if(v != null){ vt[pid] = v; rs[v] = (rs[v] || 0) + 1; tv++; } });
   if(!tv){ toast('Wala pang boto'); return; }
-  var wn = Object.keys(rs).filter(function(k){ return rs[k] * 2 >= tv; });
+  var wn = Object.keys(rs).filter(function(k){ return k !== NONE && rs[k] * 2 >= tv; });
+  G.nw = (rs[NONE] || 0) * 2 >= tv ? 1 : 0;
   G.rs = rs; G.vt = vt; G.tv = tv; G.wn = wn; G.sh = 0; G.ph = 'reveal';
   if(G.md === 'c') wn.forEach(function(w){ G.sc[w]++; });
   if(G.md === 'm') Object.keys(vt).forEach(function(v){ if(wn.indexOf(vt[v]) > -1) G.sc[v]++; });
@@ -320,16 +370,17 @@ function doReveal(){
 }
 function nextRound(){
   if(G.fin){ G.ph = 'end'; broadcast(); return; }
+  if(G.ptr + 1 >= G.pq.length){ G.ph = 'end'; G.ex = 1; broadcast(); return; }
   var n = G.od.length, i = G.od.indexOf(G.ak), next = G.ak;
   for(var k = 1; k <= n; k++){ var c = G.od[(i + k) % n], p = findPl(c); if(p && p.on){ next = c; break; } }
-  G.rd++; G.ptr++; G.ak = next; G.q = pickQ(G); resetRound(); broadcast();
+  G.rd++; G.ptr++; G.ak = next; G.q = G.pq[G.ptr]; G.used.push(G.q); resetRound(); broadcast();
 }
 function toLobby(){
-  ['od','nm','sc','rs','vt','wn','tv','ak','q','rd','ptr','seed'].forEach(function(k){ delete G[k]; });
+  ['od','nm','sc','rs','vt','wn','tv','ak','q','rd','ptr','seed','pq','ex','al','nw'].forEach(function(k){ delete G[k]; });
   G.ph = 'lobby'; G.voted = {}; G.sh = 0; G.fin = 0; votes = {}; broadcast();
 }
 function startHost(resume){
-  role = 'host'; status = 'connecting'; formErr = '';
+  role = 'host'; status = 'connecting'; formErr = ''; prevInit = false; prevOn = {}; prevKey = null; if(myAv) AV[myPid] = myAv;
   if(!resume){ code = genCode(); players = [{pid:myPid, name:myName, on:true}]; G = newGame(); votes = {}; }
   conns = {}; seen = {};
   try{ if(peer) peer.destroy(); }catch(e){}
@@ -359,7 +410,7 @@ function startHost(resume){
 
 /* ================= CLIENT ================= */
 function startClient(c){
-  role = 'client'; code = c; S = null; conn = null; status = 'connecting'; joinedOnce = false; myVote = null; formErr = '';
+  role = 'client'; code = c; S = null; conn = null; status = 'connecting'; joinedOnce = false; myVote = null; formErr = ''; prevInit = false; prevOn = {}; prevKey = null;
   try{ if(peer) peer.destroy(); }catch(e){}
   peer = new Peer(PEER_OPTS);
   peer.on('open', function(){ connectToHost(); });
@@ -404,9 +455,10 @@ function connectToHost(){
 function onClientData(m){
   if(!m || typeof m !== 'object') return;
   lastHost = Date.now();
-  if(m.t === 'w'){ myPid = m.pid; ssSet('bnb_pid', myPid); ssSet('bnb_room', code); joinedOnce = true; status = 'ok'; view = 'room'; render(); }
+  if(m.t === 'w'){ myPid = m.pid; ssSet('bnb_pid', myPid); ssSet('bnb_room', code); joinedOnce = true; status = 'ok'; view = 'room'; if(myAv){ AV[myPid] = myAv; try{ conn.send({t:'av', a:myAv}); }catch(e){} } render(); }
+  else if(m.t === 'a'){ if(m.pid && typeof m.a === 'string' && m.a.length < 60000 && AVRE.test(m.a)){ AV[m.pid] = m.a; render(); } }
   else if(m.t === 's'){
-    S = m.s; status = 'ok';
+    S = m.s; status = 'ok'; notify(S.pl);
     var g = S.g; if(myVote && (g.ph !== 'vote' || myVote.rd !== g.rd)) myVote = null;
     render();
   }
@@ -420,6 +472,7 @@ function sendVote(v){
 
 /* ---------- navigation ---------- */
 function goHome(){
+  prevKey = null; prevInit = false; prevOn = {}; closePop();
   clearTimeout(retryTimer); retryTimer = null; clearTimeout(revealTimer); revealTimer = null;
   try{ if(peer) peer.destroy(); }catch(e){}
   peer = null; conn = null; conns = {}; role = null; S = null; G = null; status = 'idle'; joinedOnce = false; view = 'home'; armLeave = 0;
@@ -434,11 +487,18 @@ function leaveRoom(){
 }
 
 /* ---------- rendering ---------- */
+function avHtml(pid, size, c){
+  var s = 'width:' + size + 'px;height:' + size + 'px;';
+  var col = colorOf(pid, c);
+  if(pid === NONE) return '<span class="dot" style="background:' + col.bg + '"></span>';
+  if(AV[pid]) return '<img class="av" alt="" src="' + AV[pid] + '" style="' + s + '">';
+  return '<span class="av" style="' + s + 'background:' + col.bg + ';color:' + col.fg + ';font-size:' + Math.round(size * .5) + 'px">' + esc((nameOf(pid, c) || '?').charAt(0).toUpperCase()) + '</span>';
+}
 function topHtml(){
-  var right = '';
+  var right = '<button class="chip" data-act="snd" aria-pressed="' + soundOn + '">Tunog: ' + (soundOn ? 'On' : 'Off') + '</button>';
   if(view === 'room'){
-    right = '<button class="chip" data-act="copy" aria-label="Kopyahin ang room code">Room ' + esc(code) + '</button><button class="chip" data-act="leave">' + (armLeave ? 'Sigurado ka?' : 'Umalis') + '</button>';
-  } else if(view === 'browse') right = '<button class="chip" data-act="back">Balik</button>';
+    right += '<button class="chip" data-act="copy" aria-label="Kopyahin ang room code">Room ' + esc(code) + '</button><button class="chip" data-act="leave">' + (armLeave ? 'Sigurado ka?' : 'Umalis') + '</button>';
+  } else if(view === 'browse') right += '<button class="chip" data-act="back">Balik</button>';
   return '<div class="brand"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M1.5 3h6.2L12 14.2 16.3 3h6.2L15 21h-6z" fill="var(--accent)"/></svg>BOTO NA, BES!</div><div class="top-right">' + right + '</div>';
 }
 function homeHtml(){
@@ -448,6 +508,8 @@ function homeHtml(){
   var busy = status === 'connecting';
   h += '<section class="panel"><label class="label" for="name">Pangalan mo</label>'
     + '<input class="field" id="name" maxlength="14" autocomplete="nickname" placeholder="hal. Migs" value="' + esc(myName) + '">'
+    + '<div class="avrow">' + (myAv ? '<img class="av" alt="Larawan mo" src="' + myAv + '" style="width:52px;height:52px">' : '<span class="av" style="width:52px;height:52px;background:var(--line);color:var(--muted);font-size:24px">?</span>')
+    + '<label class="btn alt" for="avfile0">' + (myAv ? 'Palitan ang larawan' : 'Maglagay ng larawan') + '</label><input type="file" id="avfile0" class="avfile" accept="image/*" hidden></div>'
     + '<button class="btn block" data-act="create"' + (busy ? ' disabled' : '') + '>Gumawa ng room</button>'
     + '<p class="muted center small">o sumali sa room ng kaibigan</p>'
     + '<div class="row"><input class="field codefield" id="code" maxlength="5" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="CODE" aria-label="Room code">'
@@ -462,7 +524,7 @@ function homeHtml(){
     + '<p><b>2.</b> Lalabas ang tanong na "Sino...?" sa lahat ng phone. Sabay-sabay na pipili ng sagot ang bawat isa, pati ang nagtanong.</p>'
     + '<p><b>3.</b> Kapag nakaboto na ang lahat, ilalabas ang resulta. Hulaan kung sino ang bumoto sa iyo bago ibunyag ng host.</p>'
     + '<p><b>4.</b> Kung nakakuha ka ng kahit kalahati ng boto, sa iyo ang black card. Unang makaabot sa target, panalo.</p>'
-    + '<p class="muted">Kailangang bukas ang phone ng host buong laro. Kung hindi makakonekta ang isang player, subukan ang parehong Wi-Fi.</p></div></details>';
+    + '<p class="muted">Maglagay ng larawan bago magsimula. May "Wala" na pagpipilian kung hindi akma ang tanong. Hindi na uulit ang tanong hanggang hindi pa naubos.</p><p class="muted">Kailangang bukas ang phone ng host buong laro. Kung hindi makakonekta ang isang player, subukan ang parehong Wi-Fi.</p></div></details>';
   return h;
 }
 function browseHtml(){
@@ -475,7 +537,7 @@ function browseHtml(){
 }
 function scoreHtml(g, c){
   if(g.md === 'x') return '';
-  return '<div class="score" aria-label="Score">' + g.od.map(function(pid){ return '<div class="sc"><span class="dot" style="background:' + colorOf(pid,c).bg + '"></span>' + esc(nameOf(pid,c)) + '<b>' + (g.sc[pid] || 0) + '</b></div>'; }).join('') + '</div>';
+  return '<div class="score" aria-label="Score">' + g.od.map(function(pid){ return '<div class="sc">' + avHtml(pid,22,c) + esc(nameOf(pid,c)) + '<b>' + (g.sc[pid] || 0) + '</b></div>'; }).join('') + '</div>';
 }
 function qcard(g, small){
   var q = Q[g.q] || Q[0], d = DECKS[q.d];
@@ -489,22 +551,32 @@ function lobbyHtml(c, host){
     + '<button class="btn alt block" data-act="copy">Kopyahin ang code</button></section>';
   h += '<section class="panel"><h2>Mga player (' + onN + ')</h2><div class="players">';
   pl.forEach(function(p,i){
-    h += '<span class="pl' + (p.on ? '' : ' off') + '"><span class="dot" style="background:' + COLORS[i % COLORS.length].bg + '"></span>' + esc(p.name)
+    h += '<span class="pl' + (p.on ? '' : ' off') + '">' + avHtml(p.pid,28,c) + esc(p.name)
       + (p.pid === myPid ? ' <span class="tag">ikaw</span>' : '') + (i === 0 ? ' <span class="tag">host</span>' : '') + (p.on ? '' : ' <span class="tag">offline</span>') + '</span>';
   });
-  h += '</div></section>';
+  h += '</div><div class="avrow"><label class="btn alt" for="avfile1">' + (AV[myPid] ? 'Palitan ang larawan mo' : 'Maglagay ng larawan mo') + '</label><input type="file" id="avfile1" class="avfile" accept="image/*" hidden></div></section>';
   var total = 0; Q.forEach(function(q){ if(g.dk.indexOf(q.d) > -1) total++; });
   var dis = host ? '' : ' disabled';
   h += '<section class="panel"><h2>Mga deck</h2><div class="decks">';
   DECKS.forEach(function(dk,i){ h += '<button class="deck" data-act="deck" data-i="' + i + '" aria-pressed="' + (g.dk.indexOf(i) > -1) + '"' + dis + '><i style="background:' + dk.col + '"></i>' + esc(dk.name) + ' (' + dk.qs.length + ')</button>'; });
-  h += '</div><p class="muted small">' + total + ' na tanong ang sasali sa laro.</p></section>';
+  h += '</div><p class="muted small">' + total + ' na tanong sa napiling deck. ' + g.rm + ' ang hindi pa nagagamit. Hindi na uulit ang tanong hangga\'t hindi pa naubos.</p>' + (host && g.ua ? '<button class="btn alt block" data-act="resetused">I-reset ang nagamit na tanong</button>' : '') + '</section>';
   h += '<section class="panel"><h2>Paraan ng laro</h2><div class="seg">'
     + opt('c', g.md, 'Classic', 'Black card sa nakakuha ng kalahati ng boto. Unang makaabot ng 6, panalo.', dis)
     + opt('m', g.md, 'Majority', 'Puntos para sa bawat bumoto sa nanalo. Unang makaabot ng 10, panalo.', dis)
     + opt('x', g.md, 'Chill', 'Walang score. Kwentuhan lang.', dis)
     + '<button class="opt" data-act="selfie" aria-pressed="' + !!g.sf + '"' + dis + '><b>Selfie mode</b><span>Pwedeng bumoto sa sarili.</span></button></div></section>';
-  if(host) h += '<div class="dock"><button class="btn block" data-act="start"' + (onN < 3 ? ' disabled' : '') + '>' + (onN < 3 ? 'Kailangan ng 3 o higit pang players' : 'Simulan ang laro') + '</button></div>';
-  else h += '<div class="wait">Hinihintay ang host na simulan ang laro...</div>';
+  var missing = pl.filter(function(p){ return p.on && !AV[p.pid]; });
+  var gate = missing.length && !g.sk;
+  if(host){
+    h += '<div class="dock">';
+    if(gate) h += '<div class="hint">Kulang pa ang larawan ni ' + missing.map(function(p){ return esc(p.name); }).join(', ') + '</div>';
+    h += '<button class="btn block" data-act="start"' + (onN < 3 || gate ? ' disabled' : '') + '>' + (onN < 3 ? 'Kailangan ng 3 o higit pang players' : 'Simulan ang laro') + '</button>';
+    if(gate) h += '<button class="btn text" data-act="skipav">Laktawan ang larawan</button>';
+    h += '</div>';
+  } else {
+    if(!AV[myPid]) h += '<div class="hint">Maglagay ng larawan mo bago magsimula ang laro.</div>';
+    h += '<div class="wait">Hinihintay ang host na simulan ang laro...</div>';
+  }
   return h;
 }
 function voteHtml(c, host){
@@ -512,18 +584,20 @@ function voteHtml(c, host){
   var mine = host ? (votes[myPid] != null ? votes[myPid] : null) : (myVote && myVote.rd === g.rd ? myVote.v : null);
   var pending = g.od.filter(function(pid){ var p = plOf(c.pl,pid); return p && p.on && !g.voted[pid]; });
   var onN = g.od.filter(function(pid){ var p = plOf(c.pl,pid); return p && p.on; }).length;
-  var h = '<div class="round"><b>Round ' + g.rd + '</b><span class="muted small">Nagtanong: ' + esc(nameOf(g.ak,c)) + (g.ak === myPid ? ' (ikaw)' : '') + '</span></div>' + scoreHtml(g,c) + qcard(g, false);
+  var h = '<div class="round"><b>' + roundLabel(g) + '</b><span class="muted small">Nagtanong: ' + esc(nameOf(g.ak,c)) + (g.ak === myPid ? ' (ikaw)' : '') + '</span></div>' + scoreHtml(g,c) + qcard(g, false);
   if(inGame){
     h += '<p class="label">Sino ang sagot? Pumili ng isa. Pwede mo pang baguhin.</p><div class="tiles">';
     g.od.forEach(function(pid){
       if(pid === myPid && !g.sf) return;
       var col = colorOf(pid,c), p = plOf(c.pl,pid);
-      h += '<button class="tile" data-act="vote" data-pid="' + esc(pid) + '" style="background:' + col.bg + ';color:' + col.fg + (p && !p.on ? ';opacity:.6' : '') + '" aria-pressed="' + (mine === pid) + '">' + esc(nameOf(pid,c)) + '<small>Boto mo</small></button>';
+      h += '<button class="tile" data-act="vote" data-pid="' + esc(pid) + '" style="background:' + col.bg + ';color:' + col.fg + (p && !p.on ? ';opacity:.6' : '') + '" aria-pressed="' + (mine === pid) + '">' + avHtml(pid,32,c) + '<span>' + esc(nameOf(pid,c)) + '</span><small>Boto mo</small></button>';
     });
-    h += '</div>';
+    h += '<button class="tile none" data-act="vote" data-pid="' + NONE + '" aria-pressed="' + (mine === NONE) + '">Wala<small>Walang akma sa tanong</small></button></div>';
   } else h += '<div class="notice">Nagsimula na ang laro. Nanonood ka muna hanggang sa susunod na laro.</div>';
-  h += '<p class="muted center small">' + (onN - pending.length) + ' sa ' + onN + ' ang nakaboto' + (pending.length && pending.length <= 3 ? '. Hinihintay: ' + pending.map(function(p){ return esc(nameOf(p,c)); }).join(', ') : '') + '</p>';
-  if(host) h += '<div class="dock"><button class="btn alt block" data-act="reveal">Ipakita na ang resulta</button></div>';
+  var allDone = pending.length === 0 && onN > 0;
+  h += '<p class="' + (allDone ? 'verdict center' : 'muted center small') + '">' + (allDone ? 'Nakaboto na ang lahat!' : (onN - pending.length) + ' sa ' + onN + ' ang nakaboto' + (pending.length && pending.length <= 3 ? '. Hinihintay: ' + pending.map(function(p){ return esc(nameOf(p,c)); }).join(', ') : '')) + '</p>';
+  if(host) h += '<div class="dock"><button class="btn' + (allDone ? '' : ' alt') + ' block" data-act="reveal">Ipakita na ang resulta</button></div>';
+  else if(allDone) h += '<div class="wait">Hinihintay ang host na ipakita ang resulta...</div>';
   return h;
 }
 function revealHtml(c, host){
@@ -532,16 +606,16 @@ function revealHtml(c, host){
   var zero = g.od.filter(function(p){ return !g.rs[p]; });
   var nm = function(list){ return list.map(function(w){ return esc(nameOf(w,c)); }).join(' at '); };
   var verdict;
-  if(!g.wn.length) verdict = 'Walang nakakuha ng kalahati ng boto. Walang black card.';
+  if(!g.wn.length) verdict = g.nw ? 'Walang pasok ang tanong na ito sa grupo. Walang black card.' : 'Walang nakakuha ng kalahati ng boto. Walang black card.';
   else if(g.md === 'm') verdict = nm(g.wn) + ' ang nanalo sa round. Puntos para sa mga bumoto sa kanya.';
   else if(g.md === 'x') verdict = nm(g.wn) + ' ang sagot ng barkada!';
   else verdict = nm(g.wn) + (g.wn.length > 1 ? ' ang magkahati sa black card.' : ' ang kumuha ng black card.');
-  var h = '<div class="round"><b>Round ' + g.rd + '</b><span class="muted small">' + g.tv + ' ang boto</span></div>' + qcard(g, true) + '<p class="verdict">' + verdict + '</p>';
+  var h = '<div class="round"><b>' + roundLabel(g) + '</b><span class="muted small">' + g.tv + ' ang boto</span></div>' + qcard(g, true) + '<p class="verdict">' + verdict + '</p>';
   var max = Math.max.apply(null, ids.map(function(i){ return g.rs[i]; }).concat([1]));
   h += '<section class="panel res' + (first ? ' anim' : '') + '">';
   ids.forEach(function(pid){
     var col = colorOf(pid,c), n = g.rs[pid], win = g.wn.indexOf(pid) > -1;
-    h += '<div class="rr"><div class="rh"><span class="dot" style="background:' + col.bg + '"></span><span class="n">' + esc(nameOf(pid,c)) + '</span>' + (win ? '<span class="badge">' + (g.md === 'c' ? 'Black card' : 'Panalo') + '</span>' : '') + '<span class="c">' + n + '</span></div>'
+    h += '<div class="rr"><div class="rh">' + avHtml(pid,30,c) + '<span class="n">' + esc(nameOf(pid,c)) + '</span>' + (win ? '<span class="badge">' + (g.md === 'c' ? 'Black card' : 'Panalo') + '</span>' : '') + '<span class="c">' + n + '</span></div>'
       + '<div class="track"><div class="fill" data-w="' + Math.round(n / max * 100) + '" style="background:' + col.bg + ';width:' + (first ? 0 : Math.round(n / max * 100)) + '%"></div></div>';
     if(g.sh && g.vt){
       var vs = Object.keys(g.vt).filter(function(v){ return g.vt[v] === pid; });
@@ -553,19 +627,31 @@ function revealHtml(c, host){
   h += '</section>';
   if(!g.sh) h += '<p class="muted center">Hulaan na! Para sa bawat boto na natanggap mo, hulaan kung sino ang bumoto sa iyo.</p>';
   h += scoreHtml(g,c);
-  if(host) h += '<div class="dock">' + (!g.sh ? '<button class="btn alt block" data-act="show">Ibunyag kung sino ang bumoto</button>' : '') + '<button class="btn block" data-act="next">' + (g.fin ? 'Tingnan ang panalo' : 'Susunod na tanong') + '</button></div>';
+  if(host) h += '<div class="dock">' + (!g.sh ? '<button class="btn alt block" data-act="show">Ibunyag kung sino ang bumoto</button>' : '') + '<button class="btn block" data-act="next">' + (g.fin || g.ptr + 1 >= g.pn ? 'Tingnan ang panalo' : 'Susunod na tanong') + '</button></div>';
   else h += '<div class="wait">Hinihintay ang host...</div>';
   return h;
 }
 function endHtml(c, host){
-  var g = c.g, best = 0; g.od.forEach(function(p){ best = Math.max(best, g.sc[p] || 0); });
-  var wn = g.od.filter(function(p){ return (g.sc[p] || 0) === best; });
-  var h = '<p class="label center">Panalo</p><div class="winner center">' + wn.map(function(w){ return esc(nameOf(w,c)); }).join(' at ') + '</div>';
-  if(wn.length > 1) h += '<p class="muted center">Tabla. Ang dealer ang magpapasya.</p>';
-  h += '<section class="panel"><h2>Final score</h2>' + g.od.slice().sort(function(a,b){ return (g.sc[b] || 0) - (g.sc[a] || 0); }).map(function(p){
-    return '<div class="rh"><span class="dot" style="background:' + colorOf(p,c).bg + '"></span><span class="n">' + esc(nameOf(p,c)) + '</span><span class="c">' + (g.sc[p] || 0) + '</span></div>';
-  }).join('') + '</section>';
-  return h + (host ? '<div class="dock"><button class="btn block" data-act="again">Maglaro ulit</button></div>' : '<div class="wait">Hinihintay ang host...</div>');
+  var g = c.g, h = '';
+  if(g.md === 'x'){
+    h += '<p class="label center">Tapos na</p><div class="winner center">Salamat, barkada!</div>';
+  } else {
+    var best = 0; g.od.forEach(function(p){ best = Math.max(best, g.sc[p] || 0); });
+    var wn = g.od.filter(function(p){ return (g.sc[p] || 0) === best; });
+    h += '<p class="label center">Panalo</p><div class="winner center">' + wn.map(function(w){ return esc(nameOf(w,c)); }).join(' at ') + '</div>';
+    if(wn.length > 1) h += '<p class="muted center">Tabla. Ang dealer ang magpapasya.</p>';
+    h += '<section class="panel"><h2>Final score</h2>' + g.od.slice().sort(function(a,b){ return (g.sc[b] || 0) - (g.sc[a] || 0); }).map(function(p){
+      return '<div class="rh">' + avHtml(p,30,c) + '<span class="n">' + esc(nameOf(p,c)) + '</span><span class="c">' + (g.sc[p] || 0) + '</span></div>';
+    }).join('') + '</section>';
+  }
+  if(g.ex) h += '<div class="notice">Naubos na ang lahat ng tanong sa napiling deck. Hindi na uulit ang mga tanong. Pumili ng ibang deck o i-reset ang nagamit na tanong sa lobby.</div>';
+  return h + (host ? '<div class="dock"><button class="btn block" data-act="again">Bumalik sa lobby</button></div>' : '<div class="wait">Hinihintay ang host...</div>');
+}
+function alertHtml(c, host){
+  var a = c.g.al, nm = esc(nameOf(a.pid, c));
+  if(host && a.mode === 'ask') return '<div class="alert" role="alert"><b>Umalis si ' + nm + ' sa room.</b><span>Gusto mo bang ituloy ang laro nang wala siya?</span><button class="btn block" data-act="alcont">Ituloy ang laro</button><button class="btn alt block" data-act="alwait">Hintayin siyang bumalik</button></div>';
+  if(host) return '<div class="alert" role="alert"><b>Hinihintay si ' + nm + ' na bumalik.</b><button class="btn alt block" data-act="alcont">Ituloy na nang wala siya</button></div>';
+  return '<div class="alert" role="alert"><b>Umalis si ' + nm + ' sa room.</b><span>' + (a.mode === 'ask' ? 'Hinihintay ang desisyon ng host kung itutuloy ang laro.' : 'Hinihintay siyang bumalik.') + '</span></div>';
 }
 function roomHtml(){
   var c = cur(), host = role === 'host';
@@ -573,6 +659,7 @@ function roomHtml(){
   var h = '';
   if(!host && status === 'lost') h += '<div class="notice">Nawala ang koneksyon sa host. Sinusubukang kumonekta ulit...</div>';
   var g = c.g;
+  if(g.al && g.ph !== 'lobby' && g.ph !== 'end') h += alertHtml(c, host);
   if(g.ph === 'lobby') h += lobbyHtml(c, host);
   else if(g.ph === 'vote') h += voteHtml(c, host);
   else if(g.ph === 'reveal') h += revealHtml(c, host);
@@ -588,6 +675,107 @@ function render(){
   if(keep){ var n2 = document.getElementById('name'), c2 = document.getElementById('code'); if(keep.n != null && n2) n2.value = keep.n; if(keep.c && c2) c2.value = keep.c; }
   var fills = app.querySelectorAll('.anim .fill[data-w]');
   if(fills.length) requestAnimationFrame(function(){ requestAnimationFrame(function(){ fills.forEach(function(f){ f.style.width = f.getAttribute('data-w') + '%'; }); }); });
+  if(view === 'room'){ var cc = cur(); if(cc && cc.g) checkPop(cc); }
+}
+
+/* ---------- sound, confetti, winner pop ---------- */
+var AC = null;
+function unlockAudio(){
+  try{ if(!AC){ var AX = window.AudioContext || window.webkitAudioContext; if(AX) AC = new AX(); } if(AC && AC.state === 'suspended') AC.resume(); }catch(e){}
+}
+function noiseBurst(t, d, v){
+  var n = Math.floor(AC.sampleRate * d), b = AC.createBuffer(1, n, AC.sampleRate), a = b.getChannelData(0);
+  for(var i = 0; i < n; i++) a[i] = (Math.random() * 2 - 1) * (1 - i / n);
+  var s = AC.createBufferSource(), g = AC.createGain(); s.buffer = b; g.gain.value = v; s.connect(g); g.connect(AC.destination); s.start(t);
+}
+function tone(f, t, d, type, v){
+  var o = AC.createOscillator(), g = AC.createGain(); o.type = type; o.frequency.value = f;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + .02); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + d + .05);
+}
+function fanfare(){
+  if(!soundOn || !AC) return;
+  try{
+    var t = AC.currentTime + .05, i;
+    for(i = 0; i < 14; i++) noiseBurst(t + i * .055, .05, .1 + i * .012);
+    var t2 = t + .85;
+    noiseBurst(t2, .3, .3);
+    [523.25, 659.25, 783.99, 1046.5].forEach(function(f, k){ tone(f, t2 + k * .09, .9, 'triangle', .22); });
+    [523.25, 659.25, 783.99].forEach(function(f){ tone(f, t2 + .4, 1.1, 'square', .05); });
+  }catch(e){}
+}
+function startConfetti(cv){
+  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return function(){};
+  var ctx = cv.getContext('2d'), dpr = window.devicePixelRatio || 1, w = cv.width = Math.floor(innerWidth * dpr), h = cv.height = Math.floor(innerHeight * dpr);
+  var cols = ['#E53935','#FB8C00','#FDD835','#43A047','#1E88E5','#8E24AA','#D81B60','#FFFFFF'], ps = [], i, id = 0;
+  for(i = 0; i < 220; i++){
+    var side = i % 2 ? 1 : -1;
+    ps.push({x:w / 2 + side * w * .35, y:h * .85, vx:-side * (4 + Math.random() * 10) * dpr, vy:(-Math.random() * 20 - 12) * dpr, s:(6 + Math.random() * 8) * dpr, r:Math.random() * 6, vr:(Math.random() - .5) * .4, c:cols[i % cols.length]});
+  }
+  var t0 = performance.now();
+  function f(t){
+    ctx.clearRect(0, 0, w, h); var alive = 0;
+    ps.forEach(function(p){
+      p.vy += .5 * dpr; p.vx *= .992; p.x += p.vx; p.y += p.vy; p.r += p.vr; if(p.y < h + 40 * dpr) alive++;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 3, p.s, p.s * .6); ctx.restore();
+    });
+    if(alive && t - t0 < 7000) id = requestAnimationFrame(f);
+  }
+  id = requestAnimationFrame(f);
+  return function(){ cancelAnimationFrame(id); };
+}
+function closePop(){
+  var el = document.getElementById('pop'); if(popCleanup){ popCleanup(); popCleanup = null; }
+  if(el) el.remove();
+}
+function showPop(c){
+  var g = c.g; closePop();
+  var ids = Object.keys(g.rs || {}).filter(function(k){ return k !== NONE && g.rs[k] > 0; });
+  if(!ids.length) return;
+  var top = Math.max.apply(null, ids.map(function(k){ return g.rs[k]; }));
+  var tops = ids.filter(function(k){ return g.rs[k] === top; }).slice(0,4);
+  var black = g.md === 'c' && tops.some(function(k){ return g.wn.indexOf(k) > -1; });
+  var kick = black ? 'Black card!' : (g.md === 'm' ? 'Panalo sa round' : 'Ang pinaka-binoto');
+  var size = tops.length > 2 ? 84 : tops.length > 1 ? 110 : 150;
+  var el = document.createElement('div'); el.id = 'pop'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Ang pinaka-binoto');
+  var q = Q[g.q] || Q[0];
+  el.innerHTML = '<canvas aria-hidden="true"></canvas><div class="popcard"><div class="kick">' + esc(kick) + '</div>'
+    + '<div class="popwho"><div class="names">' + tops.map(function(k){ return '<div class="one">' + avHtml(k, size, c) + '<div class="name">' + esc(nameOf(k, c)) + '</div></div>'; }).join('') + '</div>'
+    + '<div class="cnt">' + top + ' boto' + (tops.indexOf(myPid) > -1 ? '. Ikaw ang napili ng barkada!' : '') + '</div></div>'
+    + '<p class="popq">' + esc(q.t) + '</p><button class="btn" data-act="closepop">Tingnan ang resulta</button></div>';
+  document.body.appendChild(el);
+  var who = el.querySelector('.popwho'), stopFx = function(){}, reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  unlockAudio(); fanfare();
+  var tm = setTimeout(function(){ who.classList.add('in'); stopFx = startConfetti(el.querySelector('canvas')); }, reduce ? 0 : 900);
+  popCleanup = function(){ clearTimeout(tm); stopFx(); };
+  var btn = el.querySelector('button'); if(btn) btn.focus();
+}
+function checkPop(c){
+  var g = c.g, key = g.rd + ':' + g.ph;
+  if(prevKey === g.rd + ':vote' && g.ph === 'reveal') showPop(c);
+  else if(g.ph !== 'reveal' && document.getElementById('pop')) closePop();
+  prevKey = key;
+}
+function handleAvatar(file){
+  if(!file || !/^image\//.test(file.type)) return;
+  var fr = new FileReader();
+  fr.onload = function(){
+    var img = new Image();
+    img.onload = function(){
+      var s = Math.min(img.width, img.height), cv = document.createElement('canvas'); cv.width = cv.height = 128;
+      cv.getContext('2d').drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, 128, 128);
+      var url = cv.toDataURL('image/jpeg', .78);
+      if(!AVRE.test(url)){ toast('Hindi magamit ang larawang iyon'); return; }
+      myAv = url; lsSet('bnb_av', url); AV[myPid] = url;
+      if(role === 'host'){ sendAvAll(myPid); render(); }
+      else if(role === 'client'){ if(conn && conn.open){ try{ conn.send({t:'av', a:url}); }catch(e){} } render(); }
+      else render();
+      toast('Nakalagay na ang larawan mo');
+    };
+    img.onerror = function(){ toast('Hindi mabasa ang larawan'); };
+    img.src = fr.result;
+  };
+  fr.readAsDataURL(file);
 }
 
 /* ---------- events ---------- */
@@ -626,7 +814,13 @@ document.addEventListener('click', function(e){
     if(host && !armLeave){ armLeave = 1; render(); setTimeout(function(){ armLeave = 0; if(view === 'room') render(); }, 3500); }
     else leaveRoom();
   }
+  else if(a === 'snd'){ soundOn = !soundOn; lsSet('bnb_snd', soundOn ? '1' : '0'); unlockAudio(); render(); }
+  else if(a === 'closepop'){ closePop(); }
   else if(!host && a !== 'vote') return;
+  else if(a === 'alcont'){ delete G.al; broadcast(); }
+  else if(a === 'alwait'){ if(G.al) G.al.mode = 'wait'; broadcast(); }
+  else if(a === 'skipav'){ G.sk = 1; broadcast(); }
+  else if(a === 'resetused'){ G.used = []; broadcast(); toast('Na-reset ang nagamit na tanong'); }
   else if(a === 'deck'){ var i = +t.getAttribute('data-i'), k = G.dk.indexOf(i); if(k > -1) G.dk.splice(k,1); else G.dk.push(i); G.dk.sort(function(x,y){ return x - y; }); broadcast(); }
   else if(a === 'mode'){ G.md = t.getAttribute('data-m'); G.tg = G.md === 'm' ? 10 : 6; broadcast(); }
   else if(a === 'selfie'){ G.sf = G.sf ? 0 : 1; broadcast(); }
@@ -644,6 +838,11 @@ document.addEventListener('click', function(e){
     if(host){ voteFor(myPid, G.rd, v); } else sendVote(v);
   }
 });
+document.addEventListener('pointerdown', unlockAudio, {passive:true});
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closePop(); });
+document.addEventListener('change', function(e){
+  if(e.target && e.target.classList && e.target.classList.contains('avfile')){ handleAvatar(e.target.files && e.target.files[0]); e.target.value = ''; }
+});
 document.addEventListener('input', function(e){
   if(e.target.id === 'code') e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
 });
@@ -659,7 +858,7 @@ setInterval(function(){
   if(role !== 'host' || !G) return;
   var changed = false;
   players.forEach(function(p){
-    if(p.pid !== myPid && p.on && Date.now() - (seen[p.pid] || 0) > 15000){ p.on = false; changed = true; var c = conns[p.pid]; delete conns[p.pid]; try{ if(c) c.close(); }catch(e){} }
+    if(p.pid !== myPid && p.on && Date.now() - (seen[p.pid] || 0) > 15000){ markOff(p); changed = true; var c = conns[p.pid]; delete conns[p.pid]; try{ if(c) c.close(); }catch(e){} }
   });
   if(changed) broadcast();
 }, 3000);
